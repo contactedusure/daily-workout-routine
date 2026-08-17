@@ -351,7 +351,7 @@ function doseSeconds(dose){if(!dose)return 0;var m=String(dose).match(/(\d+)(?:\
  if(!m)return 0;var v=m[2]?parseInt(m[2],10):parseInt(m[1],10);return m[3]==='min'?v*60:v}
 function fmtDur(s){return s>=60?(Math.round(s/60*10)/10)+'m':s+'s'}
 function fmtClock(s){var m=Math.floor(s/60);var ss=s%60;return (m<10?'0':'')+m+':'+(ss<10?'0':'')+ss}
-var T={left:0,total:0,run:false,built:false,last:0};
+var T={left:0,total:0,run:false,built:false,end:0};
 function beep(){try{var C=window.AudioContext||window.webkitAudioContext;var c=new C();var o=c.createOscillator();var g=c.createGain();
  o.type='sine';o.frequency.value=880;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(0.25,c.currentTime);
  g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+1.4);o.start();o.stop(c.currentTime+1.4);}catch(e){}
@@ -367,12 +367,12 @@ function buildTimer(){if(T.built)return;T.built=true;
  document.body.appendChild(d);
  document.getElementById('tmGo').addEventListener('click',function(){
   if(T.run){T.run=false;this.textContent='Resume';}
-  else{if(T.left<=0)T.left=T.total;T.run=true;T.last=Date.now();this.textContent='Pause';try{if(navigator.vibrate)navigator.vibrate(40)}catch(e){}}
+  else{if(T.left<=0)T.left=T.total;T.end=Date.now()+T.left*1000;T.run=true;this.textContent='Pause';try{if(navigator.vibrate)navigator.vibrate(40)}catch(e){}}
   paintTimer();});
  document.getElementById('tmReset').addEventListener('click',function(){T.run=false;T.left=T.total;document.getElementById('tmGo').textContent='Start';paintTimer();});
  document.getElementById('tmClose').addEventListener('click',function(){T.run=false;d.style.display='none';document.body.style.overflow='';});
- setInterval(function(){if(!T.run)return;var now=Date.now();var el=Math.round((now-T.last)/1000);T.last=now;
-  T.left-=el;if(T.left<=0){T.left=0;T.run=false;document.getElementById('tmGo').textContent='Start';beep();}
+ setInterval(function(){if(!T.run)return;T.left=Math.max(0,Math.ceil((T.end-Date.now())/1000));
+  if(T.left<=0){T.run=false;document.getElementById('tmGo').textContent='Start';beep();}
   paintTimer();},250);}
 function paintTimer(){document.getElementById('tmTime').textContent=fmtClock(Math.max(0,T.left));
  var pct=T.total?(T.total-T.left)/T.total*100:0;document.getElementById('tmBar').style.width=pct+'%';}
