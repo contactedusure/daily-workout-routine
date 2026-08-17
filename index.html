@@ -1,1 +1,527 @@
-<PLACEHOLDER>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#F9F8F7"/>
+<title>Daily Workout Routine</title>
+<style>
+:root{
+ --bg:#F9F8F7; --card:#FFFFFF; --soft:#F0EFED; --text:#2C2C2B; --sub:#7D7A75; --border:#E6E5E3;
+ --accent:#2783DE; --accentSoft:#E5F2FC; --green:#46A171; --greenSoft:#E8F1EC; --orange:#D5803B; --orangeSoft:#FBEBDE; --red:#E56458; --redSoft:#FCE9E7;
+}
+@media (prefers-color-scheme: dark){
+ :root{ --bg:#191919; --card:#202020; --soft:#2A2A29; --text:#FFFFFF; --sub:rgba(255,255,255,.65); --border:rgba(255,255,255,.14);
+ --accent:#5E9FE8; --accentSoft:rgba(94,159,232,.12); --green:#72BC8F; --greenSoft:rgba(114,188,143,.12); --orange:#DE9255; --orangeSoft:rgba(222,146,85,.12); --red:#E97366; --redSoft:rgba(233,115,102,.12);}
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.5;padding-bottom:92px}
+header.top{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.appTitle{font-weight:700;font-size:17px}
+.appSub{color:var(--sub);font-size:13px;margin-top:1px}
+.streak{background:var(--orangeSoft);color:var(--orange);font-weight:700;font-size:13px;padding:6px 10px;border-radius:8px;white-space:nowrap}
+.progressWrap{position:sticky;top:57px;z-index:9;background:var(--soft);height:4px}
+.progressBar{height:4px;background:var(--accent);width:0%;transition:width .2s}
+main{max-width:560px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin:0 0 16px}
+.card h2{font-size:19px;margin:0 0 4px}
+.card h3{font-size:15px;margin:0 0 8px}
+.muted{color:var(--sub);font-size:14px}
+.timeChip{display:inline-block;background:var(--accentSoft);color:var(--accent);font-weight:600;font-size:12.5px;padding:3px 8px;border-radius:6px;margin-bottom:6px}
+.row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-top:1px solid var(--border)}
+.row.first{border-top:none}
+.chk{appearance:none;-webkit-appearance:none;width:24px;height:24px;min-width:24px;border:2px solid var(--border);border-radius:7px;background:var(--card);position:relative;cursor:pointer;margin-top:2px;padding:0}
+.chk:checked{background:var(--green);border-color:var(--green)}
+.chk:checked::after{content:"";position:absolute;left:7px;top:3px;width:5px;height:10px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.rName{font-weight:600;font-size:15px}
+.rName.done{color:var(--sub);text-decoration:line-through;font-weight:500}
+.rDose{color:var(--sub);font-size:13px;margin-top:1px}
+.infoBtn{margin-left:auto;border:1px solid var(--border);background:var(--soft);color:var(--sub);border-radius:6px;font-size:12px;padding:5px 9px;cursor:pointer;white-space:nowrap;min-height:32px}
+.note{background:var(--accentSoft);border-radius:8px;padding:10px 12px;font-size:14px;margin-top:10px}
+.noteO{background:var(--orangeSoft);border-radius:8px;padding:10px 12px;font-size:14px;margin-top:10px}
+.noteG{background:var(--greenSoft);border-radius:8px;padding:10px 12px;font-size:14px;margin-top:10px}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+.tabs button{flex:1;background:none;border:none;color:var(--sub);font-size:11.5px;font-weight:600;padding:7px 2px 9px;cursor:pointer;min-height:54px;font-family:inherit}
+.tabs button.active{color:var(--accent)}
+.tabs .ico{font-size:20px;display:block;line-height:1.25}
+.moveTop{display:flex;gap:12px;align-items:flex-start}
+.moveSvg{width:118px;min-width:118px;background:var(--soft);border-radius:10px;padding:8px}
+.moveName{font-size:16px;font-weight:700;margin:0}
+.tagRow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tag{font-size:11.5px;font-weight:600;background:var(--soft);color:var(--sub);border-radius:6px;padding:3px 8px}
+.tag.g{background:var(--greenSoft);color:var(--green)}
+.tag.b{background:var(--accentSoft);color:var(--accent)}
+ol.steps{margin:10px 0 0;padding-left:20px}
+ol.steps li{margin:4px 0;font-size:14.5px}
+.avoid{margin-top:10px;background:var(--redSoft);border-radius:8px;padding:8px 12px;font-size:13.5px}
+.search{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);font-size:15px;margin-bottom:14px;font-family:inherit}
+.pickRow{display:flex;gap:8px;margin:4px 0 10px}
+.pick{flex:1;border:1.5px solid var(--border);background:var(--card);color:var(--text);border-radius:10px;padding:12px 10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;min-height:48px}
+.pick.sel{border-color:var(--accent);background:var(--accentSoft);color:var(--accent)}
+.grid7{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.gCell{background:var(--soft);border-radius:8px;padding:8px 2px;font-size:12px;color:var(--sub)}
+.gCell b{display:block;font-size:14px;color:var(--text)}
+textarea{width:100%;min-height:90px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);padding:10px;font-size:14.5px;font-family:inherit;resize:vertical}
+svg.fig{width:100%;height:auto;display:block}
+svg.fig .ground{stroke:var(--border);stroke-width:3;stroke-linecap:round}
+svg.fig .b{stroke:var(--text);stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+svg.fig .h{fill:var(--text)}
+svg.fig .a{stroke:var(--accent);stroke-width:4;fill:none;stroke-linecap:round}
+svg.fig .db{fill:var(--accent)}
+svg.fig .soft{fill:var(--accentSoft);stroke:none}
+svg.fig .thin{stroke:var(--sub);stroke-width:3.5;fill:none;stroke-linecap:round}
+h2.sec{font-size:14px;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;margin:20px 0 10px}
+ul.tight{margin:6px 0 0;padding-left:20px}
+ul.tight li{margin:5px 0;font-size:14.5px}
+.big3{display:flex;gap:8px;margin-top:10px}
+.big3 div{flex:1;background:var(--soft);border-radius:10px;padding:10px;text-align:center}
+.big3 b{display:block;font-size:19px}
+.big3 span{font-size:11.5px;color:var(--sub)}
+.dayNav{display:flex;gap:6px;margin:0 0 14px}
+.dChip{flex:1;min-width:0;border:1.5px solid var(--border);background:var(--card);color:var(--sub);border-radius:10px;padding:7px 2px 6px;cursor:pointer;font-family:inherit;text-align:center;min-height:56px}
+.dChip .dName{display:block;font-size:11.5px;font-weight:700}
+.dChip .dNum{display:block;font-size:15px;font-weight:700;color:var(--text);margin-top:1px}
+.dChip .dDot{display:block;font-size:9.5px;color:var(--accent);font-weight:700;line-height:1.2}
+.dChip.sel{border-color:var(--accent);background:var(--accentSoft)}
+.dChip.sel .dName,.dChip.sel .dNum{color:var(--accent)}
+.rowBtns{margin-left:auto;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.rowBtns .infoBtn{margin-left:0}
+.tBtn{background:var(--accentSoft);color:var(--accent);border-color:transparent;font-weight:700}
+.tapCard{cursor:pointer;transition:border-color .15s}
+.tapCard:active{border-color:var(--accent)}
+.tmOverlay{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:20px}
+.tmCard{background:var(--card);border-radius:16px;padding:24px 20px;width:100%;max-width:360px;text-align:center}
+.tmName{font-weight:700;font-size:16px;margin-bottom:4px}
+.tmTime{font-size:64px;font-weight:800;letter-spacing:-.02em;line-height:1.15;font-variant-numeric:tabular-nums}
+.tmBarWrap{height:8px;background:var(--soft);border-radius:6px;overflow:hidden;margin:12px 0 18px}
+.tmBar{height:8px;background:var(--accent);width:0%;transition:width .25s linear}
+.tmBtns{display:flex;gap:8px}
+.tmBtn{flex:1;border:1.5px solid var(--border);background:var(--card);color:var(--text);border-radius:10px;padding:14px 8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;min-height:52px}
+.tmPrimary{background:var(--accent);border-color:var(--accent);color:#fff}
+.bars{display:flex;gap:6px;align-items:flex-end;margin-top:10px}
+.barCol{flex:1;min-width:0;text-align:center}
+.barTrack{height:90px;background:var(--soft);border-radius:6px;display:flex;align-items:flex-end;overflow:hidden}
+.barFill{width:100%;background:var(--green);border-radius:6px 6px 0 0}
+.barPct{font-size:11px;font-weight:700;color:var(--text);margin-top:4px}
+.barLbl{font-size:9.5px;color:var(--sub);white-space:nowrap}
+.numIn{margin-left:auto;width:88px;padding:10px 8px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-size:15px;font-family:inherit;text-align:center;min-height:44px}
+.miniTbl{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+.miniTbl th,.miniTbl td{padding:7px 4px;border-top:1px solid var(--border);text-align:center;color:var(--text)}
+.miniTbl th{color:var(--sub);font-weight:600}
+.miniTbl tr th:first-child{text-align:left}
+.miniTbl tr:first-child th{border-top:none}
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <div class="appTitle">Daily Workout Routine</div>
+    <div class="appSub" id="todayLabel">Loading…</div>
+  </div>
+  <div class="streak" id="streakChip">🔥 0 days</div>
+</header>
+<div class="progressWrap"><div class="progressBar" id="progressBar"></div></div>
+<main id="view"></main>
+<nav class="tabs">
+  <button data-tab="today"><span class="ico">✅</span>Today</button>
+  <button data-tab="week"><span class="ico">🗓️</span>Week</button>
+  <button data-tab="moves"><span class="ico">🏋️</span>Moves</button>
+  <button data-tab="food"><span class="ico">🍽️</span>Food</button>
+  <button data-tab="track"><span class="ico">📈</span>Track</button>
+</nav>
+<script>
+'use strict';
+var KEY='fit.v1';
+var state={};
+try{state=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){state={}}
+if(!state.days)state.days={};
+if(!state.tue)state.tue={};
+if(!state.metrics)state.metrics={};
+if(typeof state.notes!=='string')state.notes='';
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function pad(n){return String(n).padStart(2,'0')}
+function dk(d){d=d||new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function mondayKey(){var d=new Date();var dow=(d.getDay()+6)%7;d.setDate(d.getDate()-dow);return dk(d)}
+
+var FIG={
+goblet:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><rect class="soft" x="112" y="120" width="36" height="8" rx="2"/><circle class="h" cx="96" cy="44" r="10"/><path class="b" d="M96 58 L104 86"/><path class="b" d="M104 86 L134 86"/><path class="b" d="M134 86 L130 120"/><path class="b" d="M130 120 L146 120"/><path class="b" d="M96 58 L112 70 L121 62"/><rect class="db" x="116" y="54" width="18" height="12" rx="3"/>',
+chairsquat:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><rect class="soft" x="24" y="92" width="42" height="8" rx="2"/><path class="thin" d="M28 100 L28 128 M62 100 L62 128 M28 92 L28 54"/><circle class="h" cx="82" cy="36" r="10"/><path class="b" d="M84 50 L90 84"/><path class="b" d="M84 50 L120 62"/><path class="b" d="M90 84 L118 88"/><path class="b" d="M118 88 L114 126"/><path class="b" d="M114 126 L130 126"/>',
+pushup:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="44" cy="84" r="10"/><path class="b" d="M56 88 L112 98 L152 106"/><path class="b" d="M56 88 L56 126"/><path class="b" d="M152 106 L156 124"/>',
+row:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><rect class="soft" x="40" y="98" width="38" height="8" rx="2"/><path class="thin" d="M59 106 L59 128"/><circle class="h" cx="66" cy="48" r="10"/><path class="b" d="M72 60 L104 88"/><path class="b" d="M104 88 L88 108 L78 126"/><path class="b" d="M78 126 L94 126"/><path class="b" d="M104 88 L132 102 L150 124"/><path class="b" d="M72 60 L56 96"/><path class="b" d="M72 60 L98 82 L94 100"/><rect class="db" x="86" y="98" width="18" height="11" rx="3"/>',
+rdl:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="62" cy="52" r="10"/><path class="b" d="M70 62 L112 84"/><path class="b" d="M112 84 L118 104 L114 126"/><path class="b" d="M114 126 L132 126"/><path class="b" d="M70 62 L88 102"/><rect class="db" x="80" y="100" width="18" height="11" rx="3"/><path class="a" d="M118 70 L136 62"/>',
+bridge:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="36" cy="112" r="10"/><path class="b" d="M52 120 L98 86"/><path class="b" d="M98 86 L128 78"/><path class="b" d="M128 78 L142 124"/><path class="b" d="M142 124 L160 126"/><path class="b" d="M52 120 L88 125"/><path class="a" d="M98 72 L98 56"/>',
+plank:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="48" cy="86" r="10"/><path class="b" d="M60 90 L116 100 L158 110"/><path class="b" d="M60 90 L58 124"/><path class="b" d="M58 124 L76 126"/><path class="b" d="M158 110 L160 126"/>',
+deadbug:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="40" cy="110" r="10"/><path class="b" d="M56 116 L100 120"/><path class="b" d="M56 116 L56 66"/><path class="b" d="M100 120 L100 74"/><path class="b" d="M100 74 L142 74"/>',
+farmer:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="96" cy="40" r="10"/><path class="b" d="M96 54 L96 92"/><path class="b" d="M96 92 L86 126"/><path class="b" d="M96 92 L106 126"/><path class="b" d="M86 126 L98 126 M106 126 L118 126"/><path class="b" d="M96 54 L74 96"/><path class="b" d="M96 54 L118 96"/><rect class="db" x="62" y="94" width="18" height="11" rx="3"/><rect class="db" x="112" y="94" width="18" height="11" rx="3"/>',
+legpress:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><rect class="soft" x="22" y="96" width="42" height="10" rx="2"/><path class="thin" d="M30 96 L24 60"/><circle class="h" cx="40" cy="66" r="10"/><path class="b" d="M48 78 L60 98"/><path class="b" d="M60 98 L100 74"/><path class="b" d="M100 74 L138 58"/><path class="thin" d="M152 38 L152 82"/><path class="a" d="M128 52 L146 46"/>',
+chestpress:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><rect class="soft" x="72" y="102" width="36" height="8" rx="2"/><path class="thin" d="M104 102 L104 52"/><circle class="h" cx="90" cy="48" r="10"/><path class="b" d="M88 62 L92 102"/><path class="b" d="M92 102 L62 112 L58 126"/><path class="b" d="M88 62 L50 72"/><path class="thin" d="M44 58 L44 86"/>',
+seatedrow:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><rect class="soft" x="72" y="104" width="36" height="8" rx="2"/><circle class="h" cx="90" cy="46" r="10"/><path class="b" d="M88 60 L96 104"/><path class="b" d="M96 104 L128 108 L148 112"/><path class="b" d="M88 60 L142 70"/><path class="thin" d="M158 92 L158 128"/><path class="a" d="M120 66 L100 62"/>',
+latpull:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><rect class="soft" x="78" y="106" width="36" height="8" rx="2"/><circle class="h" cx="96" cy="50" r="10"/><path class="b" d="M96 64 L96 106"/><path class="b" d="M96 106 L124 110 L120 126"/><path class="b" d="M96 64 L74 32"/><path class="b" d="M96 64 L118 32"/><path class="thin" d="M58 26 L134 26"/>',
+shoulderpress:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="96" cy="40" r="10"/><path class="b" d="M96 54 L96 94"/><path class="b" d="M96 94 L86 126"/><path class="b" d="M96 94 L106 126"/><path class="b" d="M96 54 L72 52 L72 30"/><path class="b" d="M96 54 L120 52 L120 30"/><rect class="db" x="62" y="20" width="20" height="11" rx="3"/><rect class="db" x="110" y="20" width="20" height="11" rx="3"/>',
+legcurl:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><path class="thin" d="M20 106 L182 106"/><circle class="h" cx="32" cy="98" r="10"/><path class="b" d="M46 102 L110 106 L150 106"/><path class="b" d="M150 106 L150 72"/><rect class="soft" x="158" y="62" width="10" height="24" rx="3"/>',
+deepsquat:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><path class="thin" d="M152 36 L152 128"/><circle class="h" cx="92" cy="54" r="10"/><path class="b" d="M94 66 L102 104"/><path class="b" d="M94 66 L148 78"/><path class="b" d="M102 104 L136 98"/><path class="b" d="M136 98 L132 126"/><path class="b" d="M132 126 L146 126"/>',
+anklerock:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><path class="thin" d="M158 36 L158 128"/><circle class="h" cx="64" cy="42" r="10"/><path class="b" d="M72 56 L84 92"/><path class="b" d="M84 92 L124 96 L116 126"/><path class="b" d="M116 126 L142 126"/><path class="b" d="M84 92 L58 112 L46 126"/><path class="a" d="M126 88 L148 88"/><path class="a" d="M142 82 L150 88 L142 94"/>',
+calfstretch:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><path class="thin" d="M40 36 L40 128"/><circle class="h" cx="86" cy="44" r="10"/><path class="b" d="M82 58 L114 88"/><path class="b" d="M82 58 L44 70"/><path class="b" d="M114 88 L92 106 L82 126"/><path class="b" d="M82 126 L96 126"/><path class="b" d="M114 88 L162 118"/><path class="b" d="M162 118 L148 126"/>',
+hamstring:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="96" cy="66" r="10"/><path class="b" d="M88 80 L72 110"/><path class="b" d="M72 110 L118 116 L162 110"/><path class="b" d="M88 80 L134 104"/><path class="a" d="M162 110 L166 98"/>',
+lunge:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="92" cy="40" r="10"/><path class="b" d="M94 54 L96 84"/><path class="b" d="M94 54 L94 24"/><path class="b" d="M96 84 L128 98 L124 126"/><path class="b" d="M124 126 L142 126"/><path class="b" d="M96 84 L66 112"/><path class="b" d="M66 112 L44 118"/>',
+figure4:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="36" cy="112" r="10"/><path class="b" d="M52 118 L96 120"/><path class="b" d="M96 120 L122 88 L130 124"/><path class="b" d="M96 120 L74 96 L118 90"/><path class="b" d="M52 118 L110 98"/>',
+downdog:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><path class="b" d="M46 126 L64 94"/><circle class="h" cx="62" cy="104" r="10"/><path class="b" d="M64 94 L104 52"/><path class="b" d="M104 52 L156 122"/><path class="b" d="M156 122 L170 126"/>',
+cobra:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><path class="b" d="M92 116 L168 122"/><path class="b" d="M92 116 L64 80"/><circle class="h" cx="56" cy="62" r="10"/><path class="b" d="M64 80 L66 122"/>',
+catcow:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="56" cy="84" r="10"/><path class="b" d="M70 90 L70 126"/><path class="b" d="M140 94 L140 126"/><path class="b" d="M70 90 Q105 62 140 94"/>',
+child:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="46" cy="112" r="10"/><path class="b" d="M62 116 L92 102 L112 120"/><path class="b" d="M62 116 L26 124"/><path class="b" d="M112 120 L128 126"/>',
+fold:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="76" cy="108" r="10"/><path class="b" d="M84 94 L98 62"/><path class="b" d="M98 62 L104 100 L100 126"/><path class="b" d="M84 94 L80 124"/><path class="b" d="M100 126 L114 126"/>',
+twist:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="40" cy="110" r="10"/><path class="b" d="M56 116 L104 120"/><path class="b" d="M56 116 L22 118"/><path class="b" d="M104 120 L132 102"/><path class="b" d="M132 102 L154 118"/>'
+};
+function fig(k){return '<svg class="fig" viewBox="0 0 200 150" aria-hidden="true">'+FIG[k]+'</svg>'}
+
+var MOVES=[
+{id:'goblet',name:'Goblet Squat (heels elevated)',dose:'12 reps × 3',tag:'Strength · Legs',svg:'goblet',steps:['Place heels on a small wedge, two books or a folded mat (2–4 cm high).','Hold one 5 kg dumbbell vertically at your chest with both hands.','Feet shoulder-width, toes slightly out. Sit down and back between your heels.','Go as deep as is comfortable without pain, chest up.','Push through your whole foot to stand.'],avoid:'Knees caving inward. Heels lifting off the wedge. This is your main squat while ankle mobility improves — it is not cheating.'},
+{id:'chairsquat',name:'Chair Squat (sit-to-stand)',dose:'10–15 reps',tag:'Strength · Legs',svg:'chairsquat',steps:['Stand in front of a sturdy chair, feet shoulder-width.','Reach arms forward for balance.','Sit back and down until you lightly touch the chair — heels stay on the floor.','Push the floor away and stand tall.'],avoid:'Plopping down hard. Control the descent; touch, don\'t collapse.'},
+{id:'pushup',name:'Push-Up',dose:'8–12 reps × 3',tag:'Strength · Chest/Arms',svg:'pushup',steps:['Hands under shoulders, body in one straight line from head to heels.','Lower chest toward the floor, elbows about 45° from the body.','Push back up without letting hips sag.','Easier version: hands on a bed or table (incline push-up).'],avoid:'Hips sagging or piking up. Short, half reps.'},
+{id:'row',name:'One-Arm Dumbbell Row',dose:'12 each side × 3',tag:'Strength · Back',svg:'row',steps:['Place one hand and same-side knee on a chair or bed edge; back flat.','Other foot on the floor; dumbbell hangs straight down in the free hand.','Pull the elbow up past your hip — like starting a lawnmower.','Squeeze the shoulder blade at the top, lower slowly.'],avoid:'Twisting your torso to lift the weight. Keep the back flat and still.'},
+{id:'rdl',name:'Dumbbell Romanian Deadlift (RDL)',dose:'12 reps × 3',tag:'Strength · Hamstrings',svg:'rdl',steps:['Hold dumbbells in front of your thighs, knees soft (slightly bent).','Push your hips back like closing a car door with your butt.','Slide the weights down your thighs to mid-shin, back flat.','Feel the hamstring stretch, then drive hips forward to stand.'],avoid:'Rounding the lower back. Turning it into a squat — the hips go back, not down.'},
+{id:'bridge',name:'Glute Bridge',dose:'15 reps × 3',tag:'Strength · Glutes',svg:'bridge',steps:['Lie on your back, knees bent, feet flat and close to your hips.','Push through your heels and lift your hips until shoulders–hips–knees form a line.','Squeeze your glutes for 2 seconds at the top.','Lower slowly. Use the firm pillow under your head if needed.'],avoid:'Arching the lower back at the top instead of squeezing the glutes.'},
+{id:'plank',name:'Plank',dose:'30–45 sec × 3',tag:'Core',svg:'plank',steps:['Forearms on the mat, elbows under shoulders.','Body in one straight line — head to heels.','Squeeze glutes and abs, breathe normally.','Stop when form breaks, not when it starts hurting.'],avoid:'Hips sagging or pushing up into a pike.'},
+{id:'deadbug',name:'Dead Bug',dose:'10 each side',tag:'Core',svg:'deadbug',steps:['Lie on your back, arms pointing to the ceiling, hips and knees at 90°.','Press your lower back gently into the mat.','Slowly lower the right arm and left leg toward the floor.','Return and switch sides.'],avoid:'Lower back lifting off the mat. Move only as far as you can keep it down.'},
+{id:'farmer',name:'Farmer Carry',dose:'30–45 sec × 3',tag:'Strength · Grip/Core',svg:'farmer',steps:['Hold one dumbbell in each hand at your sides.','Stand tall, shoulders back and down, grip hard.','Walk slowly with short, controlled steps.'],avoid:'Leaning to one side or shrugging the shoulders up.'},
+{id:'legpress',name:'Leg Press (machine)',dose:'10–12 reps × 2–3',tag:'Gym · Legs',svg:'legpress',steps:['Sit with back and hips flat against the pad, feet shoulder-width at mid-platform.','Unlock the sled and lower until knees are about 90°.','Press the platform away without locking your knees.','Start light; add weight only when all reps feel controlled.'],avoid:'Hips lifting off the pad at the bottom. Bouncing.'},
+{id:'chestpress',name:'Chest Press (machine)',dose:'10–12 reps × 2–3',tag:'Gym · Chest',svg:'chestpress',steps:['Adjust the seat so handles are at chest height.','Grip the handles, press forward until arms are almost straight.','Return slowly until you feel a stretch across the chest.'],avoid:'Locking elbows hard at the top. Shoulders shrugging up.'},
+{id:'seatedrow',name:'Seated Row (machine)',dose:'10–12 reps × 2–3',tag:'Gym · Back',svg:'seatedrow',steps:['Sit tall, feet on the plate, knees slightly bent.','Pull the handle to your lower ribs, chest up.','Squeeze the shoulder blades together.','Return slowly without rounding your back forward.'],avoid:'Rocking the torso back and forth to move the weight.'},
+{id:'latpull',name:'Lat Pulldown (machine)',dose:'10–12 reps × 2–3',tag:'Gym · Back',svg:'latpull',steps:['Adjust the thigh pad so your legs are locked in.','Grip the bar wider than shoulders.','Lean back slightly and pull the bar to your upper chest, elbows driving down.','Control the bar back up.'],avoid:'Pulling the bar behind your neck. Using momentum.'},
+{id:'shoulderpress',name:'Shoulder Press',dose:'10 reps × 2–3',tag:'Strength · Shoulders',svg:'shoulderpress',steps:['Sit or stand tall, dumbbells at shoulder height, palms forward.','Press the weights overhead until arms are almost straight.','Lower back to shoulder height with control.'],avoid:'Arching the lower back to push the weight up.'},
+{id:'legcurl',name:'Leg Curl (machine)',dose:'10–12 reps × 2–3',tag:'Gym · Hamstrings',svg:'legcurl',steps:['Lie face down with the pad just above your heels.','Curl your heels toward your hips, squeezing the hamstrings.','Lower slowly — the lowering half builds the muscle.'],avoid:'Hips lifting off the pad. Fast, swinging reps.'},
+{id:'deepsquat',name:'Supported Deep Squat Hold',dose:'30 sec × 3',tag:'Mobility · Ankles/Hips',svg:'deepsquat',steps:['Hold a doorframe, post or table at chest height.','Feet shoulder-width, heels on the floor.','Sit down into your deepest comfortable squat, using the support for balance.','Hold and breathe. Come up slowly.'],avoid:'Forcing depth or bouncing. Never push into pain — stretch sensation only.'},
+{id:'anklerock',name:'Ankle Rocks (knee-to-wall)',dose:'10–15 each side, 1–2× daily',tag:'Mobility · Ankles',svg:'anklerock',steps:['Stand in a lunge facing a wall, front foot flat.','Keep the front heel glued down.','Gently rock the knee forward toward the wall, over the toes.','Rock back and repeat. This is the main fix for your heel-lift.'],avoid:'Heel lifting as the knee goes forward. Pain at the front of the ankle — ease off and stay in a pinch-free range. Monthly test: big toe 10 cm from wall, heel down, knee touches wall.'},
+{id:'calfstretch',name:'Calf Stretch (wall)',dose:'45 sec each side',tag:'Mobility · Calves',svg:'calfstretch',steps:['Hands on a wall, one leg straight behind you, heel pressed down, toes forward.','Lean in until you feel a stretch in the upper calf — hold 45 sec.','Then bend the back knee slightly to stretch the deeper soleus — another 45 sec.','Switch sides.'],avoid:'Back heel lifting. Bouncing.'},
+{id:'hamstring',name:'Hamstring Stretch / Floss',dose:'1 min each side',tag:'Mobility · Hamstrings',svg:'hamstring',steps:['Sit with one leg straight, the other bent away.','Hinge forward from the hips with a flat back until a mild stretch behind the thigh.','Floss version: within the stretch, gently straighten and bend the knee 10 times.'],avoid:'Rounding the spine hard to reach further. Range comes from the hips.'},
+{id:'lunge',name:'Low Lunge (hip flexor)',dose:'1 min each side',tag:'Mobility · Hips',svg:'lunge',steps:['Kneel into a low lunge, back knee on the mat (pillow under it if needed).','Tuck the pelvis slightly, then shift your weight forward.','Feel the stretch at the front of the back hip. Keep the torso tall.'],avoid:'Overarching the lower back instead of tucking the pelvis.'},
+{id:'figure4',name:'Figure-Four Stretch',dose:'1 min each side',tag:'Mobility · Glutes',svg:'figure4',steps:['Lie on your back, cross the right ankle over the left knee.','Pull the left thigh toward your chest with both hands.','Feel the stretch in the right hip/glute. Switch sides.'],avoid:'Pulling hard on the knee joint itself — hold the thigh.'},
+{id:'downdog',name:'Downward Dog',dose:'1 min',tag:'Yoga',svg:'downdog',steps:['From hands and knees, lift your hips up and back into an inverted V.','Hands shoulder-width, fingers spread.','Pedal the heels gently; a soft knee bend is fine.'],avoid:'Dumping weight into the shoulders — push the floor away.'},
+{id:'cobra',name:'Cobra',dose:'30–60 sec',tag:'Yoga',svg:'cobra',steps:['Lie face down, hands under shoulders.','Press the chest up; hips stay on the mat.','Shoulders away from ears, elbows soft.'],avoid:'Straightening the arms fully if the back pinches — stay lower.'},
+{id:'catcow',name:'Cat-Cow',dose:'10 slow reps',tag:'Yoga · Spine',svg:'catcow',steps:['Hands under shoulders, knees under hips.','Inhale: drop the belly, lift chest and tailbone (cow).','Exhale: round the spine up, tuck chin (cat).','Move one breath per position.'],avoid:'Rushing. This is a warm-up, not a stretch contest.'},
+{id:'child',name:'Child\'s Pose',dose:'1–2 min',tag:'Yoga · Recovery',svg:'child',steps:['Knees wide, big toes touching, sit hips toward heels.','Reach arms forward, forehead to the mat.','Breathe slowly into the lower back.'],avoid:'Forcing hips to heels if knees complain — widen the knees or use the pillow.'},
+{id:'fold',name:'Forward Fold (bent knees)',dose:'1 min',tag:'Mobility · Hamstrings',svg:'fold',steps:['Stand or sit with knees generously bent.','Hinge from the hips and let the head and arms hang heavy.','Breathe slowly; let gravity do the work.'],avoid:'Locking the knees and pulling hard — bent knees protect the back.'},
+{id:'twist',name:'Supine Twist',dose:'1 min each side',tag:'Yoga · Spine',svg:'twist',steps:['Lie on your back, arms out in a T.','Drop both knees to one side.','Look to the opposite side and breathe. Switch sides.'],avoid:'Forcing the knees to the floor — support them with the pillow if they hover.'},
+{id:'surya',name:'Surya Namaskar',dose:'5 rounds',tag:'Yoga · Flow',svg:'downdog',steps:['Prayer → arms up and back.','Fold forward → one leg back to lunge.','Plank → knees-chest-chin down → cobra.','Downward dog → same leg forward → fold.','Rise, arms up → prayer. One breath per movement.'],avoid:'Holding your breath. Move smoothly; 5 comfortable rounds beat 10 rushed ones.'}
+];
+
+var PRAN={time:'7:32–7:45',name:'Pranayam',items:[
+ {name:'Belly breathing',dose:'3 min'},
+ {name:'Anulom vilom',dose:'6–8 min'},
+ {name:'Bhramari',dose:'2 min'},
+ {name:'Quiet sitting',dose:'1 min'}],note:'Short travel version: 2 min belly breathing + 4 min anulom vilom + 1 min quiet sitting. No aggressive breath retention.'};
+
+var PLAN={
+1:{name:'Monday',title:'Home strength + flexibility + pranayam',blocks:[
+ {time:'6:45–6:52',name:'Warm-up',items:[
+  {name:'Marching / brisk walk in place',dose:'1 min'},
+  {name:'Arm circles',dose:'30 sec each way'},
+  {name:'Hip circles',dose:'30 sec each way'},
+  {name:'Cat-cow',dose:'10 reps',ref:'catcow'},
+  {name:'Bodyweight squats (to chair if needed)',dose:'10 reps',ref:'chairsquat'},
+  {name:'Downward dog → cobra flow',dose:'5 slow rounds',ref:'downdog'}]},
+ {time:'6:52–7:22',name:'Strength circuit · 3 rounds',note:'Rest 60–90 sec between rounds.',items:[
+  {name:'Goblet squat — heels elevated on wedge/books',dose:'12 reps',ref:'goblet'},
+  {name:'Push-ups',dose:'8–12 reps',ref:'pushup'},
+  {name:'One-arm dumbbell row',dose:'12 each side',ref:'row'},
+  {name:'Dumbbell Romanian deadlift',dose:'12 reps',ref:'rdl'},
+  {name:'Glute bridge',dose:'15 reps',ref:'bridge'},
+  {name:'Plank',dose:'30–45 sec',ref:'plank'}]},
+ {time:'7:22–7:32',name:'Flexibility',items:[
+  {name:'Supported deep squat hold',dose:'30–45 sec',ref:'deepsquat'},
+  {name:'Hamstring stretch',dose:'1 min each side',ref:'hamstring'},
+  {name:'Low lunge',dose:'1 min each side',ref:'lunge'},
+  {name:'Calf stretch',dose:'45 sec each side',ref:'calfstretch'},
+  {name:'Child\'s pose',dose:'1 min',ref:'child'}]},
+ PRAN]},
+2:{name:'Tuesday',title:'Yoga class or home yoga + cardio',conditional:true,homeBlocks:[
+ {time:'6:45–7:15',name:'Home yoga flow',items:[
+  {name:'Surya namaskar',dose:'5 rounds',ref:'surya'},
+  {name:'Warrior I → Warrior II',dose:'3 rounds each side'},
+  {name:'Triangle pose',dose:'45 sec each side'},
+  {name:'Downward dog',dose:'1 min',ref:'downdog'},
+  {name:'Low lunge',dose:'1 min each side',ref:'lunge'},
+  {name:'Forward fold (bent knees)',dose:'1 min',ref:'fold'},
+  {name:'Supine twist',dose:'1 min each side',ref:'twist'}]},
+ {time:'7:15–7:30',name:'Light cardio',items:[
+  {name:'Treadmill incline walk / cycle / cross-trainer / brisk walk',dose:'15 min comfortable'}]},
+ PRAN]},
+3:{name:'Wednesday',title:'Gym strength + stamina',blocks:[
+ {time:'6:45–6:52',name:'Warm-up',items:[
+  {name:'Treadmill or cycle, easy',dose:'7 min'}]},
+ {time:'6:52–7:25',name:'Gym strength · 2–3 sets',note:'Last 2 reps should feel challenging but controlled.',items:[
+  {name:'Leg press',dose:'10–12 reps',ref:'legpress'},
+  {name:'Chest press machine',dose:'10–12 reps',ref:'chestpress'},
+  {name:'Seated row',dose:'10–12 reps',ref:'seatedrow'},
+  {name:'Lat pulldown',dose:'10–12 reps',ref:'latpull'},
+  {name:'Dumbbell Romanian deadlift',dose:'10 reps',ref:'rdl'},
+  {name:'Plank',dose:'30–45 sec',ref:'plank'}]},
+ {time:'7:25–7:32',name:'Cardio finisher',items:[
+  {name:'Treadmill brisk walk / cycle / cross-trainer',dose:'7 min moderate'}]},
+ PRAN]},
+4:{name:'Thursday',title:'Zone 2 cardio + flexibility',blocks:[
+ {time:'6:45–7:10',name:'Zone 2 cardio',note:'You should be able to speak in short sentences, but not sing.',items:[
+  {name:'Treadmill incline walk / cycle / cross-trainer',dose:'25 min'}]},
+ {time:'7:10–7:30',name:'Mobility + ankle fix',items:[
+  {name:'Cat-cow',dose:'10 reps',ref:'catcow'},
+  {name:'Ankle rocks (knee-to-wall)',dose:'10–15 each side',ref:'anklerock'},
+  {name:'Supported deep squat hold',dose:'3 × 30 sec',ref:'deepsquat'},
+  {name:'Hamstring floss',dose:'10 each side',ref:'hamstring'},
+  {name:'Low lunge',dose:'1 min each side',ref:'lunge'},
+  {name:'Figure-four stretch',dose:'1 min each side',ref:'figure4'},
+  {name:'Forward fold (bent knees)',dose:'1 min',ref:'fold'}]},
+ PRAN]},
+5:{name:'Friday',title:'Gym strength + core',blocks:[
+ {time:'6:45–6:52',name:'Warm-up',items:[
+  {name:'Cycle or treadmill, easy',dose:'7 min'}]},
+ {time:'6:52–7:25',name:'Gym strength · 2–3 sets',items:[
+  {name:'Leg press or goblet squat (heels elevated)',dose:'10–12 reps',ref:'legpress'},
+  {name:'Chest press',dose:'10–12 reps',ref:'chestpress'},
+  {name:'Seated row',dose:'10–12 reps',ref:'seatedrow'},
+  {name:'Shoulder press (machine or light dumbbells)',dose:'10 reps',ref:'shoulderpress'},
+  {name:'Leg curl',dose:'10–12 reps',ref:'legcurl'},
+  {name:'Farmer carry',dose:'30–45 sec',ref:'farmer'},
+  {name:'Dead bug',dose:'10 each side',ref:'deadbug'}]},
+ {time:'7:25–7:32',name:'Flexibility',items:[
+  {name:'Hamstring stretch',dose:'1 min each side',ref:'hamstring'},
+  {name:'Low lunge (hip flexor)',dose:'1 min each side',ref:'lunge'},
+  {name:'Child\'s pose',dose:'1 min',ref:'child'}]},
+ PRAN]},
+6:{name:'Saturday',title:'Optional movement day',note:'A bonus day, not a punishment day. Pick any one — or rest fully if tired.',blocks:[
+ {time:'Any time',name:'Choose one',items:[
+  {name:'45–60 min relaxed walk'},
+  {name:'Yoga class'},
+  {name:'Light gym cardio'},
+  {name:'Easy swim (warm day only)'},
+  {name:'Travel / hotel-room routine'},
+  {name:'Full rest — still counts if body is tired'}]}]},
+0:{name:'Sunday',title:'Recovery + family food day',note:'Enjoy eating out. Avoid all-day overeating. Keep one protein source in the day (eggs, curd, paneer, dal, milk, sprouts). Fill the Track tab metrics this morning.',blocks:[
+ {time:'Morning',name:'Recovery minimum',items:[
+  {name:'Pranayam (belly breathing + anulom vilom + quiet sitting)',dose:'10–15 min'},
+  {name:'Gentle stretching',dose:'10–20 min'},
+  {name:'Optional relaxed walk',dose:'20 min'}]}]}
+};
+
+var FOOD=[
+{t:'After-workout breakfast (8:30 AM)',cls:'note',lines:['Never only carbs after a workout — add protein.','Best: besan/dal pancake + curd + 2 boiled eggs.','Poha/upma + 2 boiled eggs. Bread + omelette/boiled eggs.','Tea/coffee fine — keep jaggery/brown sugar to ~1 tsp.']},
+{t:'Lunch (1:00 PM)',cls:'noteG',lines:['Your current lunch is already good — keep it.','1.5–2 rotis + sabzi + dal + curd + cucumber/salad.','Walk 15–20 min right after lunch — excellent habit.']},
+{t:'Dinner (6:00 PM, flexible)',cls:'note',lines:['Soup night → add protein: curd, milk, eggs, paneer, dal or sprouts.','Biryani/paratha/Mexican bread night → add curd/salad, moderate portion.','Masala muri night → peanuts are useful; add milk/curd/egg if still hungry.']},
+{t:'Night hunger (8–9 PM)',cls:'noteO',lines:['Default: warm plain milk — you digest it well.','Occasional: 2 biscuits with milk. Don\'t make it automatic.','Avoid tea/coffee this late — it can quietly hurt sleep.']},
+{t:'Sweets & Sunday',cls:'note',lines:['Sweets 2–3×/week after lunch is fine — small portion, after a meal, never as random snacking.','Sunday eat-out: enjoy it. One protein source somewhere in the day.','Goal is food freedom, not unlimited eating: 80–85% home food + training + daily movement.']},
+{t:'Daily movement habits',cls:'noteG',lines:['Desk reset twice daily (11:30 AM & 4:30 PM): 1 min walk + shoulder rolls + chest opener + hip flexor stretch + bent-knee fold.','Keep the post-lunch walk non-negotiable.','If you start tracking steps: 6,000/day first, then 7,000–8,000.']}
+];
+
+var TIPS=['Add this app to your phone home screen: browser menu → Add to Home Screen. Then it opens like an app, full-screen.','Same time daily: set a 6:40 AM alarm named "Workout — open app".','Never miss twice: one missed day is fine; the next day is non-negotiable (tired? do the recovery version).','Tick at least one box every day — even a 10-min walk + pranayam keeps the streak alive.','Travelling? Hotel-room routine from the Week tab. No excuses needed — it\'s 25 min.','Sunday 5-min review: fill the metrics below and glance at the week grid.','Tell me what felt too easy/hard each week — we update this app and the GitHub copy together.'];
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function dayState(k){if(!state.days[k])state.days[k]={};return state.days[k]}
+
+var WEEKDAYS=[1,2,3,4,5,6,0];
+var viewDow=new Date().getDay();
+var MNAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function dateForDow(dow){var d=new Date();var diff=((dow+6)%7)-((d.getDay()+6)%7);d.setDate(d.getDate()+diff);return d}
+function itemsForDay(dow,key){var p=PLAN[dow];var out=[];
+ if(p.conditional){var v=key?state.tue[key]:'';
+  if(v==='class'){out.push({k:'tue-class',name:'Yoga class attended',dose:'60 min'});out.push({k:'tue-pran',name:'Pranayam (if not covered in class)',dose:'10\u201315 min'});}
+  else{p.homeBlocks.forEach(function(b,bi){b.items.forEach(function(it,ii){out.push({k:'b'+bi+'-'+ii,name:it.name,dose:it.dose,ref:it.ref})})});}
+ }else if(p.blocks){p.blocks.forEach(function(b,bi){b.items.forEach(function(it,ii){out.push({k:'b'+bi+'-'+ii,name:it.name,dose:it.dose,ref:it.ref})})});}
+ return out;}
+function itemsForToday(){return itemsForDay(new Date().getDay(),dk())}
+
+function recount(){var key=dk(dateForDow(viewDow));var ds=dayState(key);var items=itemsForDay(viewDow,key);var done=0;
+ items.forEach(function(it){if(ds[it.k])done++});
+ var pct=items.length?Math.round(done/items.length*100):0;
+ document.getElementById('progressBar').style.width=pct+'%';
+ ds.__done=!!(items.length&&done===items.length);
+ save();streak();}
+function streak(){var s=0;var d=new Date();var ds=state.days[dk(d)];
+ if(!(ds&&ds.__done))d.setDate(d.getDate()-1);
+ while(true){var x=state.days[dk(d)];if(x&&x.__done){s++;d.setDate(d.getDate()-1)}else break}
+ document.getElementById('streakChip').textContent='\uD83D\uDD25 '+s+(s===1?' day':' days');return s}
+function bestStreak(){var keys=Object.keys(state.days).filter(function(k){return state.days[k]&&state.days[k].__done}).sort();
+ var best=0,run=0,prev=null;
+ keys.forEach(function(k){var d=new Date(k+'T00:00:00');
+  if(prev&&Math.round((d-prev)/86400000)===1)run++;else run=1;
+  if(run>best)best=run;prev=d;});
+ return best}
+
+/* ---------- interval timer ---------- */
+function doseSeconds(dose){if(!dose)return 0;var m=String(dose).match(/(\d+)(?:\s*[\u2013-]\s*(\d+))?\s*(min|sec)\b/);
+ if(!m)return 0;var v=m[2]?parseInt(m[2],10):parseInt(m[1],10);return m[3]==='min'?v*60:v}
+function fmtDur(s){return s>=60?(Math.round(s/60*10)/10)+'m':s+'s'}
+function fmtClock(s){var m=Math.floor(s/60);var ss=s%60;return (m<10?'0':'')+m+':'+(ss<10?'0':'')+ss}
+var T={left:0,total:0,run:false,built:false,last:0};
+function beep(){try{var C=window.AudioContext||window.webkitAudioContext;var c=new C();var o=c.createOscillator();var g=c.createGain();
+ o.type='sine';o.frequency.value=880;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(0.25,c.currentTime);
+ g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+1.4);o.start();o.stop(c.currentTime+1.4);}catch(e){}
+ try{if(navigator.vibrate)navigator.vibrate([250,120,250,120,400])}catch(e){}}
+function buildTimer(){if(T.built)return;T.built=true;
+ var d=document.createElement('div');d.id='tmOverlay';d.className='tmOverlay';d.style.display='none';
+ d.innerHTML='<div class="tmCard"><div class="tmName" id="tmName"></div>'+
+ '<div class="tmTime" id="tmTime">0:00</div>'+
+ '<div class="tmBarWrap"><div class="tmBar" id="tmBar"></div></div>'+
+ '<div class="tmBtns"><button class="tmBtn tmPrimary" id="tmGo">Start</button>'+
+ '<button class="tmBtn" id="tmReset">Reset</button>'+
+ '<button class="tmBtn" id="tmClose">Close</button></div></div>';
+ document.body.appendChild(d);
+ document.getElementById('tmGo').addEventListener('click',function(){
+  if(T.run){T.run=false;this.textContent='Resume';}
+  else{if(T.left<=0)T.left=T.total;T.run=true;T.last=Date.now();this.textContent='Pause';try{if(navigator.vibrate)navigator.vibrate(40)}catch(e){}}
+  paintTimer();});
+ document.getElementById('tmReset').addEventListener('click',function(){T.run=false;T.left=T.total;document.getElementById('tmGo').textContent='Start';paintTimer();});
+ document.getElementById('tmClose').addEventListener('click',function(){T.run=false;d.style.display='none';document.body.style.overflow='';});
+ setInterval(function(){if(!T.run)return;var now=Date.now();var el=Math.round((now-T.last)/1000);T.last=now;
+  T.left-=el;if(T.left<=0){T.left=0;T.run=false;document.getElementById('tmGo').textContent='Start';beep();}
+  paintTimer();},250);}
+function paintTimer(){document.getElementById('tmTime').textContent=fmtClock(Math.max(0,T.left));
+ var pct=T.total?(T.total-T.left)/T.total*100:0;document.getElementById('tmBar').style.width=pct+'%';}
+function openTimer(name,secs){buildTimer();T.total=secs;T.left=secs;T.run=false;
+ document.getElementById('tmName').textContent=name;
+ document.getElementById('tmGo').textContent='Start';paintTimer();
+ document.getElementById('tmOverlay').style.display='flex';document.body.style.overflow='hidden';}
+
+function rowHtml(it,ds,first){var chk=ds[it.k]?' checked':'';var done=ds[it.k]?' done':'';
+ var secs=doseSeconds(it.dose);var btns='';
+ if(secs)btns+='<button class="infoBtn tBtn" data-t="'+secs+'" data-n="'+esc(it.name)+'">\u25B6 '+fmtDur(secs)+'</button>';
+ if(it.ref)btns+='<button class="infoBtn" data-ref="'+it.ref+'">How?</button>';
+ return '<div class="row'+(first?' first':'')+'"><input type="checkbox" class="chk" data-k="'+it.k+'"'+chk+'/><div><div class="rName'+done+'">'+esc(it.name)+'</div><div class="rDose">'+it.dose+'</div></div><div class="rowBtns">'+btns+'</div></div>'}
+
+function dayNavHtml(){var h='<div class="dayNav">';var today=new Date().getDay();
+ WEEKDAYS.forEach(function(d){var p=PLAN[d];var dt=dateForDow(d);
+  h+='<button class="dChip'+(d===viewDow?' sel':'')+'" data-day="'+d+'"><span class="dName">'+p.name.slice(0,3)+'</span><span class="dNum">'+dt.getDate()+'</span>'+(d===today?'<span class="dDot">today</span>':'<span class="dDot">&nbsp;</span>')+'</button>';});
+ return h+'</div>';}
+
+function renderToday(){var p=PLAN[viewDow];var isToday=viewDow===new Date().getDay();
+ var dt=dateForDow(viewDow);var key=dk(dt);var ds=dayState(key);var h='';
+ h+=dayNavHtml();
+ h+='<div class="card"><h2>'+p.name+(isToday?'':' (preview)')+'</h2><div class="muted">'+p.title+'</div>';
+ if(p.note)h+='<div class="noteO" style="margin-top:10px">'+p.note+'</div>';
+ if(!isToday)h+='<div class="note" style="margin-top:10px">You are viewing '+p.name+'\u2019s plan for '+p.name.slice(0,3)+' '+dt.getDate()+' '+MNAMES[dt.getMonth()]+'. Ticks are saved against that date \u2014 handy if you swap days. Tap "today" above to jump back.</div>';
+ h+='</div>';
+ if(p.conditional){var v=state.tue[key]||'';
+  h+='<div class="card"><h3>Yoga class today?</h3><div class="pickRow"><button class="pick'+(v==='class'?' sel':'')+'" data-pick="class">\u2705 Class happened</button><button class="pick'+(v==='home'?' sel':'')+'" data-pick="home">\uD83C\uDFE0 Class cancelled</button></div>';
+  if(v==='class'){h+='<div class="noteG">Attend class. Don\'t add a second hard workout \u2014 the class is today\'s training.</div>';
+   h+=rowHtml({k:'tue-class',name:'Yoga class attended',dose:'60 min'},ds,true);
+   h+=rowHtml({k:'tue-pran',name:'Pranayam (if not covered in class)',dose:'10\u201315 min'},ds,false);
+  }else if(v==='home'){p.homeBlocks.forEach(function(b,bi){h+=blockHtml(b,ds,bi)});
+  }else{h+='<div class="muted">Pick one to load the checklist.'+(isToday?'':' (Preview below assumes class is cancelled.)')+'</div>';
+   if(!isToday)p.homeBlocks.forEach(function(b,bi){h+=blockHtml(b,ds,bi)});}
+  h+='</div>';
+ }else{p.blocks.forEach(function(b,bi){h+=blockHtml(b,ds,bi)});}
+ h+='<div class="card"><h3>Squat reminder</h3><div class="note">Heels on a small wedge/books for goblet squats. Never force the deep squat \u2014 use support. Daily ankle rocks + calf stretches are the real fix.</div></div>';
+ document.getElementById('view').innerHTML=h;recount();window.scrollTo(0,0);}
+
+function blockHtml(b,ds,bi){var h='<div class="card"><span class="timeChip">'+b.time+'</span><h3>'+b.name+'</h3>';
+ b.items.forEach(function(it,ii){h+=rowHtml({k:'b'+bi+'-'+ii,name:it.name,dose:it.dose,ref:it.ref},ds,ii===0)});
+ if(b.note)h+='<div class="note">'+b.note+'</div>';
+ h+='</div>';return h;}
+
+function renderWeek(){var h='<h2 class="sec">Fixed weekly schedule \u2014 tap any day to open it</h2>';
+ WEEKDAYS.forEach(function(d){var p=PLAN[d];h+='<div class="card tapCard" data-daylink="'+d+'"><h3>'+p.name+'</h3><div class="muted">'+p.title+'</div></div>';});
+ h+='<div class="card"><h3>Travel fallbacks</h3><ul class="tight"><li><b>Good hotel gym (45 min):</b> 7-min warm-up \u2192 leg press/goblet squat, chest press/push-ups, row, lat pulldown, plank \u2014 3\u00D710 each \u2192 stretch \u2192 pranayam.</li><li><b>Basic gym (35 min):</b> treadmill 8 min \u2192 dumbbell squat, push-ups, row, RDL, plank \u2014 3 rounds \u2192 pranayam.</li><li><b>Room only (25\u201335 min):</b> warm-up \u2192 squats, incline push-ups on bed, glute bridges, reverse lunges, plank, dog\u2192cobra \u2014 3 rounds \u2192 stretch \u2192 pranayam.</li><li><b>Tired day:</b> 10-min walk + 10-min gentle stretching + 10-min pranayam. Never skip fully.</li></ul></div>';
+ h+='<div class="card"><h3>8-week progression</h3><ul class="tight"><li><b>Weeks 1\u20132:</b> learn the routine, intensity 6/10, light-moderate weights.</li><li><b>Weeks 3\u20134:</b> add a set to main lifts; Thursday cardio \u2192 25 min; longer deep-squat holds.</li><li><b>Weeks 5\u20136:</b> slightly heavier gym weights; add treadmill incline; 7,000 steps if tracking.</li><li><b>Weeks 7\u20138:</b> one short interval session/week if joints feel good (30 sec fast / 60 sec easy \u00D7 8\u201310).</li></ul></div>';
+ document.getElementById('view').innerHTML=h;}
+
+function renderMoves(q){q=(q||'').toLowerCase();var h='<input class="search" id="mSearch" placeholder="Search an exercise\u2026" value="'+esc(q)+'"/>';
+ var found=0;
+ MOVES.forEach(function(m){if(q&&m.name.toLowerCase().indexOf(q)<0&&m.tag.toLowerCase().indexOf(q)<0)return;found++;
+  h+='<div class="card" id="mv-'+m.id+'"><div class="moveTop"><div class="moveSvg">'+fig(m.svg)+'</div><div><div class="moveName">'+m.name+'</div><div class="tagRow"><span class="tag b">'+m.dose+'</span><span class="tag g">'+m.tag+'</span></div></div></div><ol class="steps">';
+  m.steps.forEach(function(s){h+='<li>'+s+'</li>'});
+  var secs=doseSeconds(m.dose);
+  h+='</ol><div class="avoid"><b>Avoid:</b> '+m.avoid+'</div>';
+  if(secs)h+='<button class="tmOpen tBtn infoBtn" style="margin:10px 0 0" data-t="'+secs+'" data-n="'+esc(m.name)+'">\u25B6 Start '+fmtDur(secs)+' timer</button>';
+  h+='</div>';});
+ if(!found)h+='<div class="card muted">No exercise matches "'+esc(q)+'".</div>';
+ document.getElementById('view').innerHTML=h;}
+
+function renderFood(){var h='<h2 class="sec">Food rules for fitness freedom</h2>';
+ FOOD.forEach(function(f){h+='<div class="card"><h3>'+f.t+'</h3><div class="'+f.cls+'"><ul class="tight">';
+  f.lines.forEach(function(l){h+='<li>'+l+'</li>'});h+='</ul></div></div>';});
+ document.getElementById('view').innerHTML=h;}
+
+function renderTrack(){var wk=mondayKey();var ms=state.metrics[wk]||{};var h='';
+ var done=0;var items=itemsForToday();items.forEach(function(it){if(dayState(dk())[it.k])done++});
+ var grid='';var names=['M','T','W','T','F','S','S'];
+ for(var i=0;i<7;i++){var d=new Date();var dow=(d.getDay()+6)%7;d.setDate(d.getDate()-dow+i);var x=state.days[dk(d)];
+  var mark=x&&x.__done?'\u2705':(x&&Object.keys(x).some(function(k){return k!=='__done'&&x[k]})?'\u25D0':'\u00B7');
+  grid+='<div class="gCell"><b>'+mark+'</b>'+names[i]+'</div>';}
+ h+='<div class="card"><h3>This week</h3><div class="grid7">'+grid+'</div><div class="big3"><div><b>'+done+'/'+items.length+'</b><span>today ticked</span></div><div><b id="streakNum">\u2013</b><span>day streak</span></div><div><b id="bestNum">\u2013</b><span>best streak</span></div></div></div>';
+
+ h+='<div class="card"><h3>Weekly completion \u2014 last 8 weeks</h3><div class="bars">';
+ for(var w=7;w>=0;w--){var ws=new Date();var dow0=(ws.getDay()+6)%7;ws.setDate(ws.getDate()-dow0-w*7);
+  var tot=0,dn2=0;
+  for(var wd=0;wd<7;wd++){var dd=new Date(ws);dd.setDate(dd.getDate()+wd);var kk=dk(dd);var its=itemsForDay(dd.getDay(),kk);var dss=state.days[kk]||{};
+   tot+=its.length;its.forEach(function(it){if(dss[it.k])dn2++});}
+  var pct=tot?Math.round(dn2/tot*100):0;
+  var lbl=ws.getDate()+' '+MNAMES[ws.getMonth()];
+  h+='<div class="barCol"><div class="barTrack"><div class="barFill" style="height:'+Math.max(pct,2)+'%"></div></div><div class="barPct">'+pct+'%</div><div class="barLbl">'+lbl+'</div></div>';}
+ h+='</div>';
+ var totalDone=0;Object.keys(state.days).forEach(function(k){if(state.days[k]&&state.days[k].__done)totalDone++});
+ h+='<div class="muted" style="margin-top:10px">'+totalDone+' fully completed day'+(totalDone===1?'':'s')+' recorded. Each bar = share of that week\'s checklist items ticked (Mon\u2013Sun).</div></div>';
+
+ var vals=ms.vals||{};
+ h+='<div class="card"><h3>Sunday numbers</h3><div class="muted" style="margin-bottom:4px">Enter once every Sunday \u2014 the trend table builds itself over the weeks.</div>';
+ var NUMS=[['plank','Plank hold (seconds)'],['pushups','Push-ups (max reps)'],['toe','Toe-touch gap (inches)'],['waist','Waist (inches)']];
+ NUMS.forEach(function(n,i){var v=vals[n[0]]!=null?vals[n[0]]:'';
+  h+='<div class="row'+(i===0?' first':'')+'"><div class="rName" style="font-weight:500">'+n[1]+'</div><input class="numIn" data-num="'+n[0]+'" inputmode="decimal" placeholder="\u2014" value="'+v+'"/></div>';});
+ var weeks=[];
+ for(var w2=4;w2>=1;w2--){var ws2=new Date();var dq=(ws2.getDay()+6)%7;ws2.setDate(ws2.getDate()-dq-w2*7);weeks.push(dk(ws2));}
+ var rows='';
+ NUMS.forEach(function(n){var cells='';var any=false;
+  weeks.concat([wk]).forEach(function(k2){var mm=state.metrics[k2];var vv=(mm&&mm.vals&&mm.vals[n[0]]!=null)?mm.vals[n[0]]:'\u2013';if(vv!=='\u2013')any=true;cells+='<td>'+vv+'</td>';});
+  if(any)rows+='<tr><th>'+n[1].split(' (')[0]+'</th>'+cells+'</tr>';});
+ if(rows)h+='<table class="miniTbl"><tr><th></th>'+weeks.map(function(k2){return '<th>'+k2.slice(5)+'</th>'}).join('')+'<th>This wk</th></tr>'+rows+'</table>';
+ h+='<div class="note" style="margin-top:12px">Targets: waist &amp; toe-gap gradually down \u00B7 plank 1 min easier \u00B7 push-ups 10\u201315 \u2192 15\u201320 \u00B7 energy &amp; sleep steady.</div></div>';
+
+ var METRICS=['Weight noted','Waist measured (navel level)','Toe-touch gap measured','Deep-squat hold time','Plank time','Push-up count'];
+ h+='<div class="card"><h3>Sunday checklist</h3>';
+ METRICS.forEach(function(m,i){var on=ms[i]?' checked':'';h+='<div class="row'+(i===0?' first':'')+'"><input type="checkbox" class="chk metric" data-m="'+i+'"'+on+'/><div class="rName" style="font-weight:500">'+m+'</div></div>';});
+ h+='</div>';
+ h+='<div class="card"><h3>Notes for this week</h3><textarea id="notes" placeholder="Energy, soreness, what felt easy/hard, travel days\u2026">'+esc(state.notes)+'</textarea></div>';
+ h+='<div class="card"><h3>Staying regular</h3><ul class="tight">';
+ TIPS.forEach(function(t){h+='<li>'+t+'</li>'});h+='</ul></div>';
+ document.getElementById('view').innerHTML=h;
+ document.getElementById('streakNum').textContent=streak();
+ document.getElementById('bestNum').textContent=bestStreak();}
+
+var TABS={today:renderToday,week:renderWeek,moves:function(){renderMoves('')},food:renderFood,track:renderTrack};
+function go(tab){if(!TABS[tab])tab='today';
+ document.querySelectorAll('.tabs button').forEach(function(b){b.classList.toggle('active',b.dataset.tab===tab)});
+ TABS[tab]();}
+
+var view=document.getElementById('view');
+view.addEventListener('change',function(e){var t=e.target;
+ if(t.classList.contains('chk')&&t.dataset.k!=null){var ds=dayState(dk(dateForDow(viewDow)));ds[t.dataset.k]=t.checked;save();
+  var row=t.closest('.row');if(row){var n=row.querySelector('.rName');if(n)n.classList.toggle('done',t.checked);}
+  recount();}
+ if(t.classList.contains('metric')){var wk=mondayKey();if(!state.metrics[wk])state.metrics[wk]={};state.metrics[wk][t.dataset.m]=t.checked;save();}
+ if(t.id==='notes'){state.notes=t.value;save();}
+});
+view.addEventListener('click',function(e){var t=e.target;
+ var chip=t.closest?t.closest('.dChip'):null;
+ if(chip){viewDow=parseInt(chip.dataset.day,10);renderToday();return;}
+ var daylink=t.closest?t.closest('[data-daylink]'):null;
+ if(daylink){viewDow=parseInt(daylink.dataset.daylink,10);location.hash='#/today';renderToday();return;}
+ var tbtn=t.closest?t.closest('.tBtn'):null;
+ if(tbtn){openTimer(tbtn.dataset.n,parseInt(tbtn.dataset.t,10));return;}
+ if(t.classList.contains('infoBtn')){sessionStorage.setItem('scrollTo',t.dataset.ref);location.hash='#/moves';return;}
+ if(t.classList.contains('pick')){state.tue[dk(dateForDow(viewDow))]=t.dataset.pick;save();renderToday();return;}
+});
+view.addEventListener('input',function(e){var t=e.target;
+ if(t.id==='mSearch'){renderMoves(t.value);var el=document.getElementById('mSearch');el.focus();el.setSelectionRange(el.value.length,el.value.length);}
+ if(t.classList.contains('numIn')){var wk=mondayKey();if(!state.metrics[wk])state.metrics[wk]={};if(!state.metrics[wk].vals)state.metrics[wk].vals={};
+  var v=parseFloat(t.value);if(isNaN(v))delete state.metrics[wk].vals[t.dataset.num];else state.metrics[wk].vals[t.dataset.num]=v;save();}
+});
+document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){location.hash='#/'+b.dataset.tab})});
+window.addEventListener('hashchange',function(){go((location.hash||'#/today').replace('#/',''));
+ var st=sessionStorage.getItem('scrollTo');if(st){sessionStorage.removeItem('scrollTo');setTimeout(function(){var el=document.getElementById('mv-'+st);if(el)el.scrollIntoView({block:'start'})},50);}});
+
+var dnow=new Date();var dn=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dnow.getDay()];
+document.getElementById('todayLabel').textContent=dn.slice(0,3)+' '+dnow.getDate()+' '+MNAMES[dnow.getMonth()]+' \u00B7 '+PLAN[dnow.getDay()].title;
+go((location.hash||'#/today').replace('#/',''));
+var st0=sessionStorage.getItem('scrollTo');if(st0){sessionStorage.removeItem('scrollTo');setTimeout(function(){var el=document.getElementById('mv-'+st0);if(el)el.scrollIntoView({block:'start'})},50);}
+streak();
+</script>
+</body>
+</html>
