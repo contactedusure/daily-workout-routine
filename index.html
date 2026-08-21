@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <meta name="theme-color" content="#F9F8F7"/>
-<title>Daily Workout Routine</title>
+<title>Samkit &amp; Mahima — Workout Routine</title>
 <style>
 :root{
  --bg:#F9F8F7; --card:#FFFFFF; --soft:#F0EFED; --text:#2C2C2B; --sub:#7D7A75; --border:#E6E5E3;
@@ -111,18 +111,38 @@ ul.tight li{margin:5px 0;font-size:14.5px}
 .miniTbl th{color:var(--sub);font-weight:600}
 .miniTbl tr th:first-child{text-align:left}
 .miniTbl tr:first-child th{border-top:none}
+.picker{position:fixed;inset:0;z-index:70;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
+.pickBox{width:100%;max-width:340px}
+.pickTitle{font-size:22px;font-weight:800;margin-bottom:4px;text-align:center}
+.pickSub{color:var(--sub);font-size:13.5px;margin-bottom:22px;text-align:center}
+.personBtn{display:flex;align-items:center;gap:14px;width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px;cursor:pointer;font-family:inherit;color:var(--text);text-align:left;min-height:64px}
+.personBtn:active{border-color:var(--accent)}
+.personBtn .pIco{font-size:30px}
+.personBtn .pName{font-size:17px;font-weight:700}
+.personBtn .pDesc{font-size:12.5px;color:var(--sub)}
+.switchBtn{border:1px solid var(--border);background:var(--soft);color:var(--sub);border-radius:8px;font-size:14px;padding:6px 10px;cursor:pointer;min-height:32px;font-family:inherit;white-space:nowrap}
+body.mahima{--accent:#7C5CC9;--accentSoft:#F1EAFD}
+@media (prefers-color-scheme: dark){body.mahima{--accent:#BF8EDA;--accentSoft:rgba(191,142,218,.14)}}
 </style>
 </head>
 <body>
 <header class="top">
   <div>
-    <div class="appTitle">Daily Workout Routine</div>
+    <div class="appTitle" id="appTitle">Daily Workout Routine</div>
     <div class="appSub" id="todayLabel">Loading…</div>
   </div>
-  <div class="streak" id="streakChip">🔥 0 days</div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="switchBtn" id="switchBtn" title="Switch person">⇄</button><div class="streak" id="streakChip">🔥 0 days</div></div>
 </header>
 <div class="progressWrap"><div class="progressBar" id="progressBar"></div></div>
 <main id="view"></main>
+<div class="picker" id="picker" style="display:none">
+ <div class="pickBox">
+  <div class="pickTitle">Who's working out?</div>
+  <div class="pickSub">Plans and progress stay separate on this device.</div>
+  <button class="personBtn" data-p="samkit"><span class="pIco">💪</span><span><span class="pName">Samkit</span><br/><span class="pDesc">Strength + stamina plan</span></span></button>
+  <button class="personBtn" data-p="mahima"><span class="pIco">🌸</span><span><span class="pName">Mahima</span><br/><span class="pDesc">Gentle strength + walking plan</span></span></button>
+ </div>
+</div>
 <nav class="tabs">
   <button data-tab="today"><span class="ico">✅</span>Today</button>
   <button data-tab="week"><span class="ico">🗓️</span>Week</button>
@@ -134,11 +154,11 @@ ul.tight li{margin:5px 0;font-size:14.5px}
 'use strict';
 var KEY='fit.v1';
 var state={};
-try{state=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){state={}}
-if(!state.days)state.days={};
-if(!state.tue)state.tue={};
-if(!state.metrics)state.metrics={};
-if(typeof state.notes!=='string')state.notes='';
+function loadState(){try{state=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){state={}}
+ if(!state.days)state.days={};
+ if(!state.tue)state.tue={};
+ if(!state.metrics)state.metrics={};
+ if(typeof state.notes!=='string')state.notes='';}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
 function pad(n){return String(n).padStart(2,'0')}
 function dk(d){d=d||new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
@@ -314,6 +334,148 @@ var FOOD=[
 
 var TIPS=['Add this app to your phone home screen: browser menu → Add to Home Screen. Then it opens like an app, full-screen.','Same time daily: set a 6:40 AM alarm named "Workout — open app".','Never miss twice: one missed day is fine; the next day is non-negotiable (tired? do the recovery version).','Tick at least one box every day — even a 10-min walk + pranayam keeps the streak alive.','Travelling? Hotel-room routine from the Week tab. No excuses needed — it\'s 25 min.','Sunday 5-min review: fill the metrics below and glance at the week grid.','Tell me what felt too easy/hard each week — we update this app and the GitHub copy together.'];
 
+
+var M_FIG={
+clamshell:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="36" cy="112" r="10"/><path class="b" d="M50 118 L104 122"/><path class="b" d="M104 122 L150 126"/><path class="b" d="M104 122 L138 94 L166 104"/>',
+birdog:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="152" cy="62" r="10"/><path class="b" d="M140 72 L98 94"/><path class="b" d="M98 94 L98 126"/><path class="b" d="M140 72 L138 106 L138 126"/><path class="b" d="M140 72 L184 58"/><path class="b" d="M98 94 L52 84"/>',
+leglift:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="34" cy="112" r="10"/><path class="b" d="M48 118 L106 122"/><path class="b" d="M106 122 L162 126"/><path class="b" d="M106 122 L150 86"/>',
+calfraise:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="96" cy="34" r="10"/><path class="b" d="M96 48 L96 92"/><path class="b" d="M96 92 L96 120"/><path class="b" d="M96 120 L108 126"/><path class="a" d="M120 112 L120 92"/><path class="a" d="M114 98 L120 90 L126 98"/>',
+balance:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="96" cy="34" r="10"/><path class="b" d="M96 48 L96 92"/><path class="b" d="M96 92 L96 126"/><path class="b" d="M96 126 L108 126"/><path class="b" d="M96 92 L126 108 L120 96"/>',
+breathing:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="40" cy="112" r="10"/><path class="b" d="M54 116 L110 120"/><path class="b" d="M110 120 L132 94 L152 120"/><path class="b" d="M152 120 L174 124"/><path class="b" d="M74 117 L96 104"/>',
+massage:'<line class="ground" x1="8" y1="128" x2="192" y2="128"/><circle class="h" cx="96" cy="52" r="10"/><path class="b" d="M96 66 L96 102"/><path class="b" d="M96 76 L74 96"/><path class="b" d="M96 76 L118 96"/><circle class="a" cx="96" cy="110" r="8"/>'
+};
+
+var M_MOVES=[
+{id:'mchairsquat',name:'Chair Squat (sit-to-stand)',dose:'8\u201310 reps',tag:'Strength \u00B7 Legs',svg:'chairsquat',steps:['Stand in front of a sturdy chair, feet shoulder-width.','Reach arms forward for balance.','Sit back and down until you lightly touch the chair \u2014 heels stay on the floor.','Push the floor away and stand tall.'],avoid:'Plopping down hard. Control the descent \u2014 touch, don\'t collapse.'},
+{id:'mwallpushup',name:'Wall / Incline Push-Up',dose:'8\u201310 reps',tag:'Strength \u00B7 Chest/Arms',svg:'pushup',steps:['Hands on a wall or bed edge at chest height, body in one straight line.','Lower the chest toward the wall/bed, elbows about 45\u00B0 out.','Push back without letting the hips sag.','Feet further back = harder. Start easy.'],avoid:'Hips sagging. Holding your breath \u2014 exhale as you push.'},
+{id:'mbridge',name:'Glute Bridge',dose:'12 reps',tag:'Strength \u00B7 Glutes',svg:'bridge',steps:['Lie on your back, knees bent, feet flat and close to your hips.','Push through your heels and lift your hips until shoulders\u2013hips\u2013knees form a line.','Squeeze your glutes for 2 seconds at the top.','Lower slowly.'],avoid:'Arching the lower back at the top instead of squeezing the glutes.'},
+{id:'mrow',name:'Standing Row (bottle / light dumbbell)',dose:'10 each side',tag:'Strength \u00B7 Back',svg:'row',steps:['Hinge forward slightly with a flat back and soft knees.','Let the weight hang straight down.','Pull the elbow up past your hip \u2014 like starting a lawnmower.','Lower slowly, then switch sides.'],avoid:'Twisting the torso to lift. Rounding the back.'},
+{id:'mclamshell',name:'Clamshell',dose:'10 each side',tag:'Strength \u00B7 Hips',svg:'clamshell',steps:['Lie on your side, knees bent about 90\u00B0, feet together.','Keeping the feet touching, slowly open the top knee like a clamshell.','Pause 1 second at the top, lower slowly.','Do both sides.'],avoid:'Rolling the hips backward. Fast, swingy reps.'},
+{id:'mbirdog',name:'Bird-Dog',dose:'6 each side, slow',tag:'Core \u00B7 Deep (safe)',svg:'birdog',steps:['On all fours, hands under shoulders, knees under hips.','Gently brace the lower belly \u2014 about 20% effort.','Extend the opposite arm and leg slowly, hold 3 seconds.','Return and switch. Hips stay perfectly level.'],avoid:'Lifting so high the lower back sags. Holding your breath.'},
+{id:'mdeadbug',name:'Modified Dead Bug (heel tap)',dose:'8 each side',tag:'Core \u00B7 Deep (safe)',svg:'deadbug',steps:['Lie on your back, knees bent, feet flat on the floor.','Gently brace the lower belly \u2014 like slowly zipping snug jeans.','Slowly lower ONE heel to tap the floor.','Return and switch. The back stays gently heavy on the mat.'],avoid:'Both legs together \u2014 not yet. Any pulling at the scar: make the movement smaller.'},
+{id:'mleglift',name:'Side-Lying Leg Lift',dose:'10 each side',tag:'Strength \u00B7 Hips',svg:'leglift',steps:['Lie on your side, bottom leg bent for support.','Top leg straight, foot flexed.','Lift slowly to about hip height.','Lower slower than you lifted. Do both sides.'],avoid:'Swinging the leg. Toes pointing up \u2014 keep the foot flexed.'},
+{id:'mcalfraise',name:'Standing Calf Raise',dose:'12 reps',tag:'Strength \u00B7 Calves/Balance',svg:'calfraise',steps:['Stand tall, fingertips on a wall or chair back.','Rise up on your toes slowly.','Pause 1 second at the top.','Lower slowly.'],avoid:'Bouncing at the bottom. Gripping the wall hard.'},
+{id:'mbalance',name:'Single-Leg Stand',dose:'20\u201330 sec each side',tag:'Balance',svg:'balance',steps:['Stand tall near a wall, fingertips resting on it.','Lift one foot a few centimetres off the floor.','Hold 20\u201330 seconds, breathing normally.','Switch sides.'],avoid:'Holding your breath. Clawing the wall \u2014 fingertips only.'},
+{id:'mbreathing',name:'Diaphragmatic Breathing + Gentle Brace',dose:'3 min',tag:'Core \u00B7 Deep (safe)',svg:'breathing',steps:['Lie on your back, knees bent, hands on your lower ribs.','Inhale into the sides of the ribs \u2014 you should feel your hands move out.','Exhale slowly while gently drawing the lower belly inward, about 20% effort \u2014 like zipping snug jeans, not sucking in hard.','Continue for 3 minutes, slow and easy. This trains the body\'s corset muscle without pressuring the scar.'],avoid:'Hard sucking-in. Any breath holding. This should feel calming, never strained.'},
+{id:'mmassage',name:'Scar Self-Massage',dose:'3\u20134 min',tag:'Scar care',svg:'massage',steps:['Best after a warm shower or with a little oil.','Gentle fingertip circles AROUND the ball \u2014 not on the most tender point.','Light skin glides up/down and side-to-side over the scar.','Gently lift and roll the skin around it. 3\u20134 minutes total. Mild pulling is okay; sharp pain is not.'],avoid:'Sharp pain. Pressing hard directly on the tenderest spot. If her doctor restricts scar massage, follow that instead.'},
+{id:'mcatcow',name:'Cat-Cow (small range)',dose:'8 slow reps',tag:'Yoga \u00B7 Spine',svg:'catcow',steps:['Hands under shoulders, knees under hips.','Inhale: gently drop the belly a little, lift the chest (cow).','Exhale: round the spine softly, tuck the chin slightly (cat).','Small, comfortable range \u2014 one breath per position.'],avoid:'Deep ranges that stretch the scar. Rushing.'},
+{id:'mtwist',name:'Supine Twist',dose:'45 sec each side',tag:'Yoga \u00B7 Spine',svg:'twist',steps:['Lie on your back, arms out in a T.','Drop both knees gently to one side.','Look to the opposite side and breathe. Switch sides.'],avoid:'Forcing the knees to the floor \u2014 support them with a pillow if they hover.'},
+{id:'mchild',name:'Child\'s Pose (side breathing)',dose:'1 min',tag:'Yoga \u00B7 Recovery',svg:'child',steps:['Knees wide, big toes touching, sit the hips toward the heels.','Reach the arms forward, forehead to the mat.','Breathe slowly into the LEFT side of the ribs \u2014 this gently stretches the scarred side.'],avoid:'Forcing the hips to the heels if the knees complain \u2014 widen the knees or use a pillow.'}
+];
+
+var M_PLAN={
+1:{name:'Monday',title:'Gentle strength A + core-scar care',blocks:[
+ {time:'6:45\u20136:52',name:'Warm-up',items:[
+  {name:'Marching in place',dose:'2 min'},
+  {name:'Shoulder rolls',dose:'10 each way'},
+  {name:'Hip circles',dose:'10 each way'},
+  {name:'Cat-cow, slow and small range',dose:'8 reps',ref:'mcatcow'}]},
+ {time:'6:52\u20137:15',name:'Strength circuit \u00B7 2\u20133 rounds',note:'Rest as needed between rounds. Exhale on effort \u2014 never hold your breath. Gym option: swap chair squat \u2192 leg press (light), push-up \u2192 chest press machine, row \u2192 seated row machine.',items:[
+  {name:'Chair squat (sit-to-stand)',dose:'10 reps',ref:'mchairsquat'},
+  {name:'Wall / incline push-up',dose:'8\u201310 reps',ref:'mwallpushup'},
+  {name:'Glute bridge',dose:'12 reps',ref:'mbridge'},
+  {name:'Standing row (bottle / light dumbbell)',dose:'10 each side',ref:'mrow'},
+  {name:'Clamshell (side-lying)',dose:'10 each side',ref:'mclamshell'},
+  {name:'Bird-dog, slow',dose:'6 each side',ref:'mbirdog'}]},
+ {time:'7:15\u20137:30',name:'Core-scar care block',note:'The heart of the plan \u2014 this is what changes the pain over 8\u201312 weeks.',items:[
+  {name:'Diaphragmatic breathing + gentle brace',dose:'3 min',ref:'mbreathing'},
+  {name:'Modified dead bug (heel tap)',dose:'8 each side',ref:'mdeadbug'},
+  {name:'Scar self-massage',dose:'3\u20134 min',ref:'mmassage'},
+  {name:'Child\'s pose \u2014 breathe into left ribs',dose:'1 min',ref:'mchild'}]}]},
+2:{name:'Tuesday',title:'Brisk walk + mobility + core-scar care',blocks:[
+ {time:'6:45\u20137:10',name:'Brisk walk',note:'You should be able to talk in short sentences, but not sing.',items:[
+  {name:'Brisk walk (outside or treadmill)',dose:'25 min'}]},
+ {time:'7:10\u20137:20',name:'Mobility',items:[
+  {name:'Cat-cow',dose:'8 reps',ref:'mcatcow'},
+  {name:'Standing side stretch',dose:'30 sec each side'},
+  {name:'Supine twist',dose:'45 sec each side',ref:'mtwist'},
+  {name:'Child\'s pose, knees wide',dose:'1 min',ref:'mchild'}]},
+ {time:'7:20\u20137:30',name:'Core-scar care (short)',items:[
+  {name:'Diaphragmatic breathing + gentle brace',dose:'3 min',ref:'mbreathing'},
+  {name:'Scar self-massage',dose:'3\u20134 min',ref:'mmassage'}]}]},
+3:{name:'Wednesday',title:'Gentle strength B + balance',blocks:[
+ {time:'6:45\u20136:52',name:'Warm-up',items:[
+  {name:'Marching in place',dose:'2 min'},
+  {name:'Shoulder rolls',dose:'10 each way'},
+  {name:'Hip circles',dose:'10 each way'},
+  {name:'Cat-cow, slow and small range',dose:'8 reps',ref:'mcatcow'}]},
+ {time:'6:52\u20137:15',name:'Strength circuit \u00B7 2\u20133 rounds',note:'Rest as needed between rounds. Exhale on effort \u2014 never hold your breath. Gym option: swap sit-to-stand \u2192 leg press (light), push-up \u2192 chest press machine.',items:[
+  {name:'Sit-to-stand with 2-sec hover',dose:'8 reps',ref:'mchairsquat'},
+  {name:'Incline push-up',dose:'8\u201310 reps',ref:'mwallpushup'},
+  {name:'Side-lying leg lift',dose:'10 each side',ref:'mleglift'},
+  {name:'Standing calf raise',dose:'12 reps',ref:'mcalfraise'},
+  {name:'Single-leg stand (near wall)',dose:'20\u201330 sec each side',ref:'mbalance'},
+  {name:'Bird-dog, slow',dose:'6 each side',ref:'mbirdog'}]},
+ {time:'7:15\u20137:30',name:'Core-scar care block',note:'The heart of the plan \u2014 this is what changes the pain over 8\u201312 weeks.',items:[
+  {name:'Diaphragmatic breathing + gentle brace',dose:'3 min',ref:'mbreathing'},
+  {name:'Modified dead bug (heel tap)',dose:'8 each side',ref:'mdeadbug'},
+  {name:'Scar self-massage',dose:'3\u20134 min',ref:'mmassage'},
+  {name:'Child\'s pose \u2014 breathe into left ribs',dose:'1 min',ref:'mchild'}]}]},
+4:{name:'Thursday',title:'Brisk walk + mobility + core-scar care',blocks:[
+ {time:'6:45\u20137:10',name:'Brisk walk',note:'Steady pace, and if comfortable make the last 5 minutes slightly faster.',items:[
+  {name:'Brisk walk (outside or treadmill)',dose:'25 min'}]},
+ {time:'7:10\u20137:20',name:'Mobility',items:[
+  {name:'Cat-cow',dose:'8 reps',ref:'mcatcow'},
+  {name:'Standing side stretch',dose:'30 sec each side'},
+  {name:'Supine twist',dose:'45 sec each side',ref:'mtwist'},
+  {name:'Child\'s pose, knees wide',dose:'1 min',ref:'mchild'}]},
+ {time:'7:20\u20137:30',name:'Core-scar care (short)',items:[
+  {name:'Diaphragmatic breathing + gentle brace',dose:'3 min',ref:'mbreathing'},
+  {name:'Scar self-massage',dose:'3\u20134 min',ref:'mmassage'}]}]},
+5:{name:'Friday',title:'Gentle strength A + core-scar care',blocks:[
+ {time:'6:45\u20136:52',name:'Warm-up',items:[
+  {name:'Marching in place',dose:'2 min'},
+  {name:'Shoulder rolls',dose:'10 each way'},
+  {name:'Hip circles',dose:'10 each way'},
+  {name:'Cat-cow, slow and small range',dose:'8 reps',ref:'mcatcow'}]},
+ {time:'6:52\u20137:15',name:'Strength circuit \u00B7 2\u20133 rounds',note:'Rest as needed between rounds. Exhale on effort \u2014 never hold your breath.',items:[
+  {name:'Chair squat (sit-to-stand)',dose:'10 reps',ref:'mchairsquat'},
+  {name:'Wall / incline push-up',dose:'8\u201310 reps',ref:'mwallpushup'},
+  {name:'Glute bridge',dose:'12 reps',ref:'mbridge'},
+  {name:'Standing row (bottle / light dumbbell)',dose:'10 each side',ref:'mrow'},
+  {name:'Clamshell (side-lying)',dose:'10 each side',ref:'mclamshell'},
+  {name:'Bird-dog, slow',dose:'6 each side',ref:'mbirdog'}]},
+ {time:'7:15\u20137:30',name:'Core-scar care block',note:'The heart of the plan \u2014 this is what changes the pain over 8\u201312 weeks.',items:[
+  {name:'Diaphragmatic breathing + gentle brace',dose:'3 min',ref:'mbreathing'},
+  {name:'Modified dead bug (heel tap)',dose:'8 each side',ref:'mdeadbug'},
+  {name:'Scar self-massage',dose:'3\u20134 min',ref:'mmassage'},
+  {name:'Child\'s pose \u2014 breathe into left ribs',dose:'1 min',ref:'mchild'}]}]},
+6:{name:'Saturday',title:'Optional movement day',note:'A bonus day, never a punishment day. Pick any one \u2014 or rest fully.',blocks:[
+ {time:'Any time',name:'Choose one',items:[
+  {name:'Relaxed walk',dose:'30\u201345 min'},
+  {name:'Gentle yoga video',dose:'20\u201330 min'},
+  {name:'Full rest \u2014 still counts if the body is tired'}]}]},
+0:{name:'Sunday',title:'Recovery + weekly review',note:'Fill the Track tab numbers this morning. The most important one: pain-free days this week.',blocks:[
+ {time:'Morning',name:'Recovery minimum',items:[
+  {name:'Gentle stretching',dose:'10 min'},
+  {name:'Weekly tracking review with Samkit',dose:'5 min'}]}]}
+};
+
+var M_FOOD=[
+{t:'The 3 big habits',cls:'noteG',lines:['Walk 10\u201315 min after lunch and dinner \u2014 non-negotiable, the #1 blood-sugar habit.','Protein at every meal: dal, paneer, curd, sprouts, soya, besan, nuts, seeds.','Eat in order: salad/veg first \u2192 protein second \u2192 roti/rice last. Same food, lower glucose spike.']},
+{t:'Breakfast (after workout)',cls:'note',lines:['Besan/dal chilla + curd.','Moong sprouts + paneer.','Vegetable poha with peanuts + curd on the side.','Never only carbs.']},
+{t:'Lunch',cls:'noteG',lines:['Salad first, then dal/paneer/rajma, then 1\u20132 rotis.','Multigrain or besan-mixed atta if possible.','Curd daily.']},
+{t:'Dinner (light and early)',cls:'note',lines:['Vegetable + protein (paneer/soya/dal) + small carb portion.','Khichdi with extra dal or paneer works well.','Early, light dinners help both sleep and blood sugar.']},
+{t:'Snacks & drinks',cls:'noteO',lines:['Roasted chana, a handful of nuts, buttermilk.','Fruit with nuts \u2014 never fruit or juice alone.','Cut sugar/jaggery in tea gradually \u2014 for insulin they count the same.','Sweets: small portion, after a meal, not between meals.']},
+{t:'Keep the joy',cls:'noteG',lines:['Sunday family food and eating out stays \u2014 one relaxed day a week helps consistency.','Weight target: slow, 0.25\u20130.5 kg per month. Crash diets worsen pain and insulin resistance.']}
+];
+
+var M_TIPS=['Do the core-scar care block every single workout day \u2014 it is the treatment, not an extra.','Gym is available in the apartment complex \u2014 on strength days she can swap in light machines (leg press, chest press, seated row); the notes on each strength day say how.','Walk 10\u201315 min after lunch and dinner. This one habit does more for insulin resistance than any diet change.','Log pain-free days honestly \u2014 the weekly trend matters more than any single day.','Poor-sleep night? Next morning is walk + mobility only. Sleep is part of the medicine.','Never hold your breath while exercising \u2014 exhale on effort.','Scar massage: gentle circles and skin glides around the ball, 3\u20134 min daily. Mild pulling is okay, sharp pain is not.','Sunday 5-min review: fill the numbers together with Samkit.','Tell Samkit which exercises feel like they tug at the scar \u2014 we will swap them out.'];
+
+var M_METRICS=['Counted pain-free days','Noted worst pain moment','Post-meal walks counted','Sleep average noted','Weight / waist noted'];
+var M_NUMS=[['painfree','Pain-free days (of 7)'],['worstpain','Worst pain (0\u201310)'],['walks','Post-meal walks (of 14)'],['sleep','Avg sleep (hours)']];
+var M_FOOTER=['Safety reminder','Pain rule: 0\u20133/10 mild awareness is fine. Sharp, pulling or pinching pain at the scar \u2014 stop, note it, tell Samkit. No crunches or sit-ups. Exhale on effort, never hold your breath.'];
+
+var M_WEEK1='<div class="card"><h3>8-week progression</h3><ul class="tight"><li><b>Weeks 1\u20132:</b> learn the moves, 2 rounds only, comfortable walks. Breathing + scar massage daily.</li><li><b>Weeks 3\u20134:</b> 3 rounds on strength days; walks to 30 min brisk; Thursday faster finish if comfortable.</li><li><b>Weeks 5\u20136:</b> slightly heavier weight on rows (or light gym machines); heel taps \u2192 legs at 90\u00B0 dead bug if zero pain.</li><li><b>Weeks 7\u20138:</b> review tracking; if pain-free days are up, she graduates \u2014 add knee side plank after checking with her doctor.</li></ul></div>';
+var M_WEEK2='<div class="card"><h3>Red flags \u2014 see a doctor</h3><ul class="tight"><li>The ball becomes hard, suddenly larger, or cannot be gently pressed flat when lying relaxed.</li><li>Severe pain there with nausea, vomiting, fever, or a swollen hard abdomen \u2192 emergency, go immediately.</li><li>Pain steadily worsening week over week despite scaling back.</li><li>Any new bulge along the old incision lines.</li></ul></div>';
+
+for(var fk in M_FIG)FIG[fk]=M_FIG[fk];
+var PROFILES={
+ samkit:{name:'Samkit',icon:'\uD83D\uDCAA',foodSec:'Food rules for fitness freedom',KEY:'fit.v1',metrics:['Weight noted','Waist measured (navel level)','Toe-touch gap measured','Deep-squat hold time','Plank time','Push-up count'],nums:[['plank','Plank hold (seconds)'],['pushups','Push-ups (max reps)'],['toe','Toe-touch gap (inches)'],['waist','Waist (inches)']],footerCard:'<div class="card"><h3>Squat reminder</h3><div class="note">Heels on a small wedge/books for goblet squats. Never force the deep squat \u2014 use support. Daily ankle rocks + calf stretches are the real fix.</div></div>',trackNote:'Targets: waist &amp; toe-gap gradually down \u00B7 plank 1 min easier \u00B7 push-ups 10\u201315 \u2192 15\u201320 \u00B7 energy &amp; sleep steady.',weekExtra:['<div class="card"><h3>Travel fallbacks</h3><ul class="tight"><li><b>Good hotel gym (45 min):</b> 7-min warm-up \u2192 leg press/goblet squat, chest press/push-ups, row, lat pulldown, plank \u2014 3\u00D710 each \u2192 stretch \u2192 pranayam.</li><li><b>Basic gym (35 min):</b> treadmill 8 min \u2192 dumbbell squat, push-ups, row, RDL, plank \u2014 3 rounds \u2192 pranayam.</li><li><b>Room only (25\u201335 min):</b> warm-up \u2192 squats, incline push-ups on bed, glute bridges, reverse lunges, plank, dog\u2192cobra \u2014 3 rounds \u2192 stretch \u2192 pranayam.</li><li><b>Tired day:</b> 10-min walk + 10-min gentle stretching + 10-min pranayam. Never skip fully.</li></ul></div>','<div class="card"><h3>8-week progression</h3><ul class="tight"><li><b>Weeks 1\u20132:</b> learn the routine, intensity 6/10, light-moderate weights.</li><li><b>Weeks 3\u20134:</b> add a set to main lifts; Thursday cardio \u2192 25 min; longer deep-squat holds.</li><li><b>Weeks 5\u20136:</b> slightly heavier gym weights; add treadmill incline; 7,000 steps if tracking.</li><li><b>Weeks 7\u20138:</b> one short interval session/week if joints feel good (30 sec fast / 60 sec easy \u00D7 8\u201310).</li></ul></div>']},
+ mahima:{name:'Mahima',icon:'\uD83C\uDF38',foodSec:'Food rules \u2014 vegetarian & blood-sugar friendly',KEY:'fit.v1.mahima',metrics:M_METRICS,nums:M_NUMS,footerCard:'<div class="card"><h3>'+M_FOOTER[0]+'</h3><div class="note">'+M_FOOTER[1]+'</div></div>',trackNote:'The most important number is pain-free days \u2014 everything else exists to move it. Worst pain gradually down \u00B7 10+ post-meal walks \u00B7 sleep 7.5+ hours.',weekExtra:[M_WEEK1,M_WEEK2]}
+};
+PROFILES.samkit.PLAN=PLAN;PROFILES.samkit.MOVES=MOVES;PROFILES.samkit.FOOD=FOOD;PROFILES.samkit.TIPS=TIPS;
+PROFILES.mahima.PLAN=M_PLAN;PROFILES.mahima.MOVES=M_MOVES;PROFILES.mahima.FOOD=M_FOOD;PROFILES.mahima.TIPS=M_TIPS;
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
 function dayState(k){if(!state.days[k])state.days[k]={};return state.days[k]}
 
@@ -409,7 +571,7 @@ function renderToday(){var p=PLAN[viewDow];var isToday=viewDow===new Date().getD
    if(!isToday)p.homeBlocks.forEach(function(b,bi){h+=blockHtml(b,ds,bi)});}
   h+='</div>';
  }else{p.blocks.forEach(function(b,bi){h+=blockHtml(b,ds,bi)});}
- h+='<div class="card"><h3>Squat reminder</h3><div class="note">Heels on a small wedge/books for goblet squats. Never force the deep squat \u2014 use support. Daily ankle rocks + calf stretches are the real fix.</div></div>';
+ if(CUR.footerCard)h+=CUR.footerCard;
  document.getElementById('view').innerHTML=h;recount();window.scrollTo(0,0);}
 
 function blockHtml(b,ds,bi){var h='<div class="card"><span class="timeChip">'+b.time+'</span><h3>'+b.name+'</h3>';
@@ -419,8 +581,7 @@ function blockHtml(b,ds,bi){var h='<div class="card"><span class="timeChip">'+b.
 
 function renderWeek(){var h='<h2 class="sec">Fixed weekly schedule \u2014 tap any day to open it</h2>';
  WEEKDAYS.forEach(function(d){var p=PLAN[d];h+='<div class="card tapCard" data-daylink="'+d+'"><h3>'+p.name+'</h3><div class="muted">'+p.title+'</div></div>';});
- h+='<div class="card"><h3>Travel fallbacks</h3><ul class="tight"><li><b>Good hotel gym (45 min):</b> 7-min warm-up \u2192 leg press/goblet squat, chest press/push-ups, row, lat pulldown, plank \u2014 3\u00D710 each \u2192 stretch \u2192 pranayam.</li><li><b>Basic gym (35 min):</b> treadmill 8 min \u2192 dumbbell squat, push-ups, row, RDL, plank \u2014 3 rounds \u2192 pranayam.</li><li><b>Room only (25\u201335 min):</b> warm-up \u2192 squats, incline push-ups on bed, glute bridges, reverse lunges, plank, dog\u2192cobra \u2014 3 rounds \u2192 stretch \u2192 pranayam.</li><li><b>Tired day:</b> 10-min walk + 10-min gentle stretching + 10-min pranayam. Never skip fully.</li></ul></div>';
- h+='<div class="card"><h3>8-week progression</h3><ul class="tight"><li><b>Weeks 1\u20132:</b> learn the routine, intensity 6/10, light-moderate weights.</li><li><b>Weeks 3\u20134:</b> add a set to main lifts; Thursday cardio \u2192 25 min; longer deep-squat holds.</li><li><b>Weeks 5\u20136:</b> slightly heavier gym weights; add treadmill incline; 7,000 steps if tracking.</li><li><b>Weeks 7\u20138:</b> one short interval session/week if joints feel good (30 sec fast / 60 sec easy \u00D7 8\u201310).</li></ul></div>';
+  CUR.weekExtra.forEach(function(w){h+=w});
  document.getElementById('view').innerHTML=h;}
 
 function renderMoves(q){q=(q||'').toLowerCase();var h='<input class="search" id="mSearch" placeholder="Search an exercise\u2026" value="'+esc(q)+'"/>';
@@ -435,7 +596,7 @@ function renderMoves(q){q=(q||'').toLowerCase();var h='<input class="search" id=
  if(!found)h+='<div class="card muted">No exercise matches "'+esc(q)+'".</div>';
  document.getElementById('view').innerHTML=h;}
 
-function renderFood(){var h='<h2 class="sec">Food rules for fitness freedom</h2>';
+function renderFood(){var h='<h2 class="sec">'+CUR.foodSec+'</h2>';
  FOOD.forEach(function(f){h+='<div class="card"><h3>'+f.t+'</h3><div class="'+f.cls+'"><ul class="tight">';
   f.lines.forEach(function(l){h+='<li>'+l+'</li>'});h+='</ul></div></div>';});
  document.getElementById('view').innerHTML=h;}
@@ -462,7 +623,7 @@ function renderTrack(){var wk=mondayKey();var ms=state.metrics[wk]||{};var h='';
 
  var vals=ms.vals||{};
  h+='<div class="card"><h3>Sunday numbers</h3><div class="muted" style="margin-bottom:4px">Enter once every Sunday \u2014 the trend table builds itself over the weeks.</div>';
- var NUMS=[['plank','Plank hold (seconds)'],['pushups','Push-ups (max reps)'],['toe','Toe-touch gap (inches)'],['waist','Waist (inches)']];
+ var NUMS=CUR.nums;
  NUMS.forEach(function(n,i){var v=vals[n[0]]!=null?vals[n[0]]:'';
   h+='<div class="row'+(i===0?' first':'')+'"><div class="rName" style="font-weight:500">'+n[1]+'</div><input class="numIn" data-num="'+n[0]+'" inputmode="decimal" placeholder="\u2014" value="'+v+'"/></div>';});
  var weeks=[];
@@ -472,9 +633,9 @@ function renderTrack(){var wk=mondayKey();var ms=state.metrics[wk]||{};var h='';
   weeks.concat([wk]).forEach(function(k2){var mm=state.metrics[k2];var vv=(mm&&mm.vals&&mm.vals[n[0]]!=null)?mm.vals[n[0]]:'\u2013';if(vv!=='\u2013')any=true;cells+='<td>'+vv+'</td>';});
   if(any)rows+='<tr><th>'+n[1].split(' (')[0]+'</th>'+cells+'</tr>';});
  if(rows)h+='<table class="miniTbl"><tr><th></th>'+weeks.map(function(k2){return '<th>'+k2.slice(5)+'</th>'}).join('')+'<th>This wk</th></tr>'+rows+'</table>';
- h+='<div class="note" style="margin-top:12px">Targets: waist &amp; toe-gap gradually down \u00B7 plank 1 min easier \u00B7 push-ups 10\u201315 \u2192 15\u201320 \u00B7 energy &amp; sleep steady.</div></div>';
+ h+='<div class="note" style="margin-top:12px">'+CUR.trackNote+'</div></div>';
 
- var METRICS=['Weight noted','Waist measured (navel level)','Toe-touch gap measured','Deep-squat hold time','Plank time','Push-up count'];
+ var METRICS=CUR.metrics;
  h+='<div class="card"><h3>Sunday checklist</h3>';
  METRICS.forEach(function(m,i){var on=ms[i]?' checked':'';h+='<div class="row'+(i===0?' first':'')+'"><input type="checkbox" class="chk metric" data-m="'+i+'"'+on+'/><div class="rName" style="font-weight:500">'+m+'</div></div>';});
  h+='</div>';
@@ -505,7 +666,7 @@ view.addEventListener('click',function(e){var t=e.target;
  if(daylink){viewDow=parseInt(daylink.dataset.daylink,10);location.hash='#/today';renderToday();return;}
  var tbtn=t.closest?t.closest('.tBtn'):null;
  if(tbtn){openTimer(tbtn.dataset.n,parseInt(tbtn.dataset.t,10));return;}
- if(t.classList.contains('infoBtn')){sessionStorage.setItem('scrollTo',t.dataset.ref);location.hash='#/moves';return;}
+ if(t.classList.contains('infoBtn')){var ref=t.dataset.ref;if(location.hash==='#/moves'){go('moves');}else{location.hash='#/moves';}setTimeout(function(){var el=document.getElementById('mv-'+ref);if(el){el.scrollIntoView({block:'start'});window.scrollBy(0,-70);}},90);return;}
  if(t.classList.contains('pick')){state.tue[dk(dateForDow(viewDow))]=t.dataset.pick;save();renderToday();return;}
 });
 view.addEventListener('input',function(e){var t=e.target;
@@ -517,11 +678,23 @@ document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener
 window.addEventListener('hashchange',function(){go((location.hash||'#/today').replace('#/',''));
  var st=sessionStorage.getItem('scrollTo');if(st){sessionStorage.removeItem('scrollTo');setTimeout(function(){var el=document.getElementById('mv-'+st);if(el)el.scrollIntoView({block:'start'})},50);}});
 
-var dnow=new Date();var dn=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dnow.getDay()];
-document.getElementById('todayLabel').textContent=dn.slice(0,3)+' '+dnow.getDate()+' '+MNAMES[dnow.getMonth()]+' \u00B7 '+PLAN[dnow.getDay()].title;
-go((location.hash||'#/today').replace('#/',''));
-var st0=sessionStorage.getItem('scrollTo');if(st0){sessionStorage.removeItem('scrollTo');setTimeout(function(){var el=document.getElementById('mv-'+st0);if(el)el.scrollIntoView({block:'start'})},50);}
-streak();
+var CUR=null;
+function setProfile(id,tab){if(!PROFILES[id])id='samkit';CUR=PROFILES[id];KEY=CUR.KEY;PLAN=CUR.PLAN;MOVES=CUR.MOVES;FOOD=CUR.FOOD;TIPS=CUR.TIPS;
+ try{localStorage.setItem('fit.profile',id)}catch(e){}
+ loadState();
+ document.getElementById('appTitle').textContent=CUR.icon+' '+CUR.name;
+ document.body.classList.toggle('mahima',id==='mahima');
+ var dnow=new Date();var dn=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dnow.getDay()];
+ document.getElementById('todayLabel').textContent=dn.slice(0,3)+' '+dnow.getDate()+' '+MNAMES[dnow.getMonth()]+' · '+PLAN[dnow.getDay()].title;
+ viewDow=dnow.getDay();
+ document.getElementById('picker').style.display='none';
+ go(tab||'today');streak();}
+document.getElementById('switchBtn').addEventListener('click',function(){document.getElementById('picker').style.display='flex';});
+document.querySelectorAll('.personBtn').forEach(function(b){b.addEventListener('click',function(){setProfile(b.dataset.p,'today');location.hash='#/today';});});
+var savedP=null;try{savedP=localStorage.getItem('fit.profile')}catch(e){}
+if(savedP&&PROFILES[savedP]){setProfile(savedP,(location.hash||'#/today').replace('#/',''));
+ var st0=sessionStorage.getItem('scrollTo');if(st0){sessionStorage.removeItem('scrollTo');setTimeout(function(){var el=document.getElementById('mv-'+st0);if(el)el.scrollIntoView({block:'start'})},50);}
+}else{document.getElementById('picker').style.display='flex';}
 </script>
 </body>
 </html>
